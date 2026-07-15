@@ -6,22 +6,22 @@ enum WirelessSecurity { none, wpa2Wpa3, wpa3, wpa, wpa2Enterprise, wep }
 extension WirelessSecurityX on WirelessSecurity {
   String localizedLabel(AppLocalizations l10n) {
     switch (this) {
-      case WirelessSecurity.none:
+      case WirelessSecurity.none: //Open Network
         return l10n.securityNone;
 
-      case WirelessSecurity.wpa2Wpa3:
+      case WirelessSecurity.wpa2Wpa3: //Transitional Mixed Mode
         return l10n.securityWpa2Wpa3;
 
-      case WirelessSecurity.wpa3:
+      case WirelessSecurity.wpa3: //Modern Standard
         return l10n.securityWpa3;
 
-      case WirelessSecurity.wpa:
+      case WirelessSecurity.wpa: //Legacy Stopgap Standard
         return l10n.securityWpa;
 
-      case WirelessSecurity.wpa2Enterprise:
+      case WirelessSecurity.wpa2Enterprise: //802.1X Enterprise Authentication
         return l10n.securityWpa2Enterprise;
 
-      case WirelessSecurity.wep:
+      case WirelessSecurity.wep: //Deprecated Primitive Standard
         return l10n.securityWep;
     }
   }
@@ -49,30 +49,6 @@ extension PrivateAddressTypeParsing on String {
     return PrivateAddressType.values.firstWhere(
       (e) => e.name == this,
       orElse: () => PrivateAddressType.off,
-    );
-  }
-}
-
-enum ProxyType { off, automatic, manual }
-
-extension ProxyTypeX on ProxyType {
-  String label(AppLocalizations l10n) {
-    switch (this) {
-      case ProxyType.off:
-        return l10n.off;
-      case ProxyType.automatic:
-        return l10n.automatic;
-      case ProxyType.manual:
-        return l10n.manual;
-    }
-  }
-}
-
-extension ProxyTypeParsing on String {
-  ProxyType toProxyType() {
-    return ProxyType.values.firstWhere(
-      (e) => e.name == this,
-      orElse: () => ProxyType.off,
     );
   }
 }

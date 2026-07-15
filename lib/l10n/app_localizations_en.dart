@@ -86,9 +86,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lowDataMode => 'Low Data mode';
 
   @override
-  String get limitIpAddressTracking => 'Limit IP Address Tracking';
-
-  @override
   String get ipv4Address => 'IPv4 Address';
 
   @override
@@ -99,12 +96,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get configureDns => 'Configure DNS';
-
-  @override
-  String get httpProxy => 'HTTP Proxy';
-
-  @override
-  String get configureProxy => 'Configure Proxy';
 
   @override
   String get automatic => 'Automatic';
@@ -194,33 +185,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noSavedNetwork => 'No saved networks';
 
   @override
-  String get proxyUrl => 'URL';
-
-  @override
-  String get proxyEnterUrl => 'Enter url';
-
-  @override
-  String get proxyServer => 'Server';
-
-  @override
-  String get proxyEnterServer => 'Enter server';
-
-  @override
-  String get proxyPort => 'Port';
-
-  @override
-  String get proxyEnterPort => 'Enter port';
-
-  @override
-  String get proxyAuthentication => 'Authentication';
-
-  @override
-  String get proxyUsername => 'Username';
-
-  @override
-  String get proxyPassword => 'Password';
-
-  @override
   String get dnsServers => 'DNS Servers';
 
   @override
@@ -231,6 +195,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addDomainsHintText => 'domain.com';
+
+  @override
+  String get invalidIpAddress => 'Enter a valid IPv4 address.';
+
+  @override
+  String get unspecifiedIpAddress => '0.0.0.0 is not a valid host IP address.';
+
+  @override
+  String get loopbackIpAddress =>
+      'Loopback addresses (127.x.x.x) cannot be used.';
+
+  @override
+  String get multicastIpAddress =>
+      'Multicast addresses cannot be assigned to a host.';
+
+  @override
+  String get invalidSubnetMask => 'Enter a valid subnet mask.';
+
+  @override
+  String get invalidSubnetPrefix => 'Enter a valid subnet prefix.';
+
+  @override
+  String get invalidSubnetPrefixRange =>
+      'Subnet prefix must be between 1 and 30.';
+
+  @override
+  String get networkAddressNotAllowed =>
+      'The IP address cannot be the network address.';
+
+  @override
+  String get broadcastAddressNotAllowed =>
+      'The IP address cannot be the broadcast address.';
+
+  @override
+  String get invalidGateway => 'Enter a valid gateway address.';
+
+  @override
+  String get gatewayDifferentSubnet =>
+      'The gateway must be in the same subnet as the IP address.';
+
+  @override
+  String get gatewaySameAsIp =>
+      'The gateway cannot be the same as the IP address.';
 
   @override
   String get myDevices => 'My devices';

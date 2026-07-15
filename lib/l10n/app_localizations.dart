@@ -244,12 +244,6 @@ abstract class AppLocalizations {
   /// **'Low Data mode'**
   String get lowDataMode;
 
-  /// No description provided for @limitIpAddressTracking.
-  ///
-  /// In en, this message translates to:
-  /// **'Limit IP Address Tracking'**
-  String get limitIpAddressTracking;
-
   /// No description provided for @ipv4Address.
   ///
   /// In en, this message translates to:
@@ -273,18 +267,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Configure DNS'**
   String get configureDns;
-
-  /// No description provided for @httpProxy.
-  ///
-  /// In en, this message translates to:
-  /// **'HTTP Proxy'**
-  String get httpProxy;
-
-  /// No description provided for @configureProxy.
-  ///
-  /// In en, this message translates to:
-  /// **'Configure Proxy'**
-  String get configureProxy;
 
   /// No description provided for @automatic.
   ///
@@ -460,60 +442,6 @@ abstract class AppLocalizations {
   /// **'No saved networks'**
   String get noSavedNetwork;
 
-  /// No description provided for @proxyUrl.
-  ///
-  /// In en, this message translates to:
-  /// **'URL'**
-  String get proxyUrl;
-
-  /// No description provided for @proxyEnterUrl.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter url'**
-  String get proxyEnterUrl;
-
-  /// No description provided for @proxyServer.
-  ///
-  /// In en, this message translates to:
-  /// **'Server'**
-  String get proxyServer;
-
-  /// No description provided for @proxyEnterServer.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter server'**
-  String get proxyEnterServer;
-
-  /// No description provided for @proxyPort.
-  ///
-  /// In en, this message translates to:
-  /// **'Port'**
-  String get proxyPort;
-
-  /// No description provided for @proxyEnterPort.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter port'**
-  String get proxyEnterPort;
-
-  /// No description provided for @proxyAuthentication.
-  ///
-  /// In en, this message translates to:
-  /// **'Authentication'**
-  String get proxyAuthentication;
-
-  /// No description provided for @proxyUsername.
-  ///
-  /// In en, this message translates to:
-  /// **'Username'**
-  String get proxyUsername;
-
-  /// No description provided for @proxyPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Password'**
-  String get proxyPassword;
-
   /// No description provided for @dnsServers.
   ///
   /// In en, this message translates to:
@@ -537,6 +465,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'domain.com'**
   String get addDomainsHintText;
+
+  /// Shown when the IP address format is invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid IPv4 address.'**
+  String get invalidIpAddress;
+
+  /// No description provided for @unspecifiedIpAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'0.0.0.0 is not a valid host IP address.'**
+  String get unspecifiedIpAddress;
+
+  /// No description provided for @loopbackIpAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Loopback addresses (127.x.x.x) cannot be used.'**
+  String get loopbackIpAddress;
+
+  /// No description provided for @multicastIpAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Multicast addresses cannot be assigned to a host.'**
+  String get multicastIpAddress;
+
+  /// Shown when the subnet mask format is invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid subnet mask.'**
+  String get invalidSubnetMask;
+
+  /// Shown when the subnet prefix cannot be parsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid subnet prefix.'**
+  String get invalidSubnetPrefix;
+
+  /// Shown when the subnet prefix is outside the supported range.
+  ///
+  /// In en, this message translates to:
+  /// **'Subnet prefix must be between 1 and 30.'**
+  String get invalidSubnetPrefixRange;
+
+  /// Shown when the entered IP address is the network address.
+  ///
+  /// In en, this message translates to:
+  /// **'The IP address cannot be the network address.'**
+  String get networkAddressNotAllowed;
+
+  /// Shown when the entered IP address is the broadcast address.
+  ///
+  /// In en, this message translates to:
+  /// **'The IP address cannot be the broadcast address.'**
+  String get broadcastAddressNotAllowed;
+
+  /// Shown when the gateway format is invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid gateway address.'**
+  String get invalidGateway;
+
+  /// Shown when the gateway is outside the subnet.
+  ///
+  /// In en, this message translates to:
+  /// **'The gateway must be in the same subnet as the IP address.'**
+  String get gatewayDifferentSubnet;
+
+  /// Shown when the gateway equals the IP address.
+  ///
+  /// In en, this message translates to:
+  /// **'The gateway cannot be the same as the IP address.'**
+  String get gatewaySameAsIp;
 
   /// No description provided for @myDevices.
   ///

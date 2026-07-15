@@ -25,33 +25,42 @@ class _WirelessScreenState extends State<WirelessScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WirelessBloc, WirelessState>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: WirelessAppBar(breadcrumbController: _breadcrumbController),
-          body: const WirelessBody(),
-          bottomNavigationBar: BottomBar(
-            leading: CustomIconButton.asset(
-              assetPath: SettingIcons.back,
-              enabled: true,
-              onPressed: () => Navigator.pop(context),
+    return Scaffold(
+      appBar: WirelessAppBar(breadcrumbController: _breadcrumbController),
+      body: const WirelessBody(),
+      bottomNavigationBar:
+          BlocSelector<
+            WirelessBloc,
+            WirelessState,
+            ({bool isWirelessOn, bool isScanning})
+          >(
+            selector: (state) => (
+              isWirelessOn: state.isWirelessOn,
+              isScanning: state.isScanning,
             ),
-            trailing: state.isWirelessOn && !state.isScanning
-                ? [
-                    CustomIconButton.asset(
-                      assetPath: SettingIcons.refresh,
-                      enabled: true,
-                      onPressed: () {
-                        context.read<WirelessBloc>().add(
-                          const ToggleWirelessPower(true),
-                        );
-                      },
-                    ),
-                  ]
-                : null,
+            builder: (context, state) {
+              return BottomBar(
+                leading: CustomIconButton.asset(
+                  assetPath: SettingIcons.back,
+                  enabled: true,
+                  onPressed: () => Navigator.pop(context),
+                ),
+                trailing: state.isWirelessOn && !state.isScanning
+                    ? [
+                        CustomIconButton.asset(
+                          assetPath: SettingIcons.refresh,
+                          enabled: true,
+                          onPressed: () {
+                            context.read<WirelessBloc>().add(
+                              const ToggleWirelessPower(true),
+                            );
+                          },
+                        ),
+                      ]
+                    : null,
+              );
+            },
           ),
-        );
-      },
     );
   }
 }

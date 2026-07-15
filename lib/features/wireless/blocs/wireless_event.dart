@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:mechanix_settings/features/wireless/data/models/wifi_network.dart';
+import 'package:mechanix_settings/features/wireless/data/models/enums.dart';
 
 abstract class WirelessEvent extends Equatable {
   const WirelessEvent();
@@ -8,8 +9,14 @@ abstract class WirelessEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class InitWifi extends WirelessEvent {}
+
 class LoadWireless extends WirelessEvent {
-  const LoadWireless();
+  final bool requestScan;
+  const LoadWireless({this.requestScan = true});
+
+  @override
+  List<Object?> get props => [requestScan];
 }
 
 class ToggleWirelessPower extends WirelessEvent {
@@ -35,12 +42,12 @@ class ConnectToNetworkEvent extends WirelessEvent {
 
 class AddNetworkEvent extends WirelessEvent {
   final String name;
-  final String password;
+  final WirelessSecurity security;
 
-  const AddNetworkEvent(this.name, this.password);
+  const AddNetworkEvent(this.name, this.security);
 
   @override
-  List<Object?> get props => [name];
+  List<Object?> get props => [name, security];
 }
 
 class UpdateNetworkSettingsEvent extends WirelessEvent {
@@ -49,6 +56,53 @@ class UpdateNetworkSettingsEvent extends WirelessEvent {
 
   @override
   List<Object?> get props => [network];
+}
+
+class UpdateIPSettingsEvent extends WirelessEvent {
+  final WifiNetwork network;
+  final IPv4ConfigType ipConfigType;
+  final String ipAddress;
+  final String subnetMask;
+  final String router;
+
+  const UpdateIPSettingsEvent({
+    required this.network,
+    required this.ipConfigType,
+    required this.ipAddress,
+    required this.subnetMask,
+    required this.router,
+  });
+
+  @override
+  List<Object?> get props => [
+    network,
+    ipConfigType,
+    ipAddress,
+    subnetMask,
+    router,
+  ];
+}
+
+class UpdateDNSSettingsEvent extends WirelessEvent {
+  final WifiNetwork network;
+  final DNSConfigType dnsConfigType;
+  final List<String> dnsServers;
+  final List<String> dnsSearchDomains;
+
+  const UpdateDNSSettingsEvent({
+    required this.network,
+    required this.dnsConfigType,
+    required this.dnsServers,
+    required this.dnsSearchDomains,
+  });
+
+  @override
+  List<Object?> get props => [
+    network,
+    dnsConfigType,
+    dnsServers,
+    dnsSearchDomains,
+  ];
 }
 
 class ForgetNetworkEvent extends WirelessEvent {

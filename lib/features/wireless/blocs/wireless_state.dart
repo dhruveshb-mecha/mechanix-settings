@@ -8,6 +8,7 @@ class WirelessState extends Equatable {
   final bool isScanning;
   final List<WifiNetwork> savedNetworks;
   final List<WifiNetwork> availableNetworks;
+  final List<WifiNetwork> myNetworks;
   final String? connectingNetworkName;
   final String? connectedNetworkName;
 
@@ -16,6 +17,7 @@ class WirelessState extends Equatable {
     this.isScanning = false,
     this.savedNetworks = const [],
     this.availableNetworks = const [],
+    this.myNetworks = const [],
     this.connectingNetworkName,
     this.connectedNetworkName,
   });
@@ -25,6 +27,7 @@ class WirelessState extends Equatable {
     bool? isScanning,
     List<WifiNetwork>? savedNetworks,
     List<WifiNetwork>? availableNetworks,
+    List<WifiNetwork>? myNetworks,
     Object? connectingNetworkName = _unset,
     Object? connectedNetworkName = _unset,
   }) {
@@ -33,6 +36,7 @@ class WirelessState extends Equatable {
       isScanning: isScanning ?? this.isScanning,
       savedNetworks: savedNetworks ?? this.savedNetworks,
       availableNetworks: availableNetworks ?? this.availableNetworks,
+      myNetworks: myNetworks ?? this.myNetworks,
       connectingNetworkName: connectingNetworkName == _unset
           ? this.connectingNetworkName
           : connectingNetworkName as String?,

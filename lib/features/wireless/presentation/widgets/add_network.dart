@@ -20,30 +20,24 @@ class AddNetworkBottomSheet extends StatefulWidget {
 
 class _AddNetworkBottomSheetState extends State<AddNetworkBottomSheet> {
   final _nameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _passwordFocusNode = FocusNode();
 
-  bool _obscurePassword = true;
   WirelessSecurity _security = WirelessSecurity.wpa2Wpa3;
 
   @override
   void dispose() {
     _nameController.dispose();
-    _passwordController.dispose();
-    _passwordFocusNode.dispose();
     super.dispose();
   }
 
   void _onAdd() {
     final name = _nameController.text.trim();
-    final password = _passwordController.text.trim();
 
-    if (name.isEmpty || (password.isEmpty && _security.requiresPassword)) {
+    if (name.isEmpty) {
       return;
     }
 
     context.read<WirelessBloc>().add(
-      AddNetworkEvent(name, _security.requiresPassword ? password : ''),
+      AddNetworkEvent(name, _security),
     );
 
     Navigator.pop(context);
@@ -86,13 +80,8 @@ class _AddNetworkBottomSheetState extends State<AddNetworkBottomSheet> {
           CustomTextField(
             controller: _nameController,
             hintText: l10n.hintName,
-            nextFocusNode: _security.requiresPassword
-                ? _passwordFocusNode
-                : null,
-            textInputAction: _security.requiresPassword
-                ? TextInputAction.next
-                : TextInputAction.done,
-            onSubmitted: _security.requiresPassword ? null : (_) => _onAdd(),
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _onAdd(),
             prefixIcon: const CustomImage(
               assetPath: SettingIcons.wireless,
               size: 18,
@@ -101,38 +90,6 @@ class _AddNetworkBottomSheetState extends State<AddNetworkBottomSheet> {
           ),
 
           const SizedBox(height: 12),
-
-          /// Password
-          if (_security.requiresPassword) ...[
-            CustomTextField(
-              controller: _passwordController,
-              hintText: l10n.enterPassword,
-              focusNode: _passwordFocusNode,
-              textInputAction: TextInputAction.done,
-              obscureText: _obscurePassword,
-              obscuringCharacter: '*',
-              onSubmitted: (_) => _onAdd(),
-              prefixIcon: const Icon(
-                Icons.lock_outline,
-                size: 24,
-                color: AppColors.onSurfaceVariantDark,
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                  size: 18,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
 
           /// Security row
           InkWell(
