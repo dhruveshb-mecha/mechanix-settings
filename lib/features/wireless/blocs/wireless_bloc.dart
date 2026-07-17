@@ -318,7 +318,11 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
       _connectionInProgress = true;
       emit(state.copyWith(connectingNetworkName: event.name, error: null));
 
-      await wirelessRepository.connectToNetwork(event.name, event.password);
+      await wirelessRepository.connectToNetwork(
+        event.name,
+        event.password,
+        enterpriseConfig: event.enterpriseConfig,
+      );
     } catch (e, stackTrace) {
       _connectionInProgress = false;
       emit(state.copyWith(connectingNetworkName: null, error: e.toString()));

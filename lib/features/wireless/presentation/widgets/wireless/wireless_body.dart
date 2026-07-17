@@ -8,11 +8,13 @@ import 'package:mechanix_settings/core/widgets/custom_divider.dart';
 import 'package:mechanix_settings/core/widgets/custom_image_asset.dart';
 import 'package:mechanix_settings/core/widgets/custom_toggle.dart';
 import 'package:mechanix_settings/features/wireless/blocs/wireless_bloc.dart';
+import 'package:mechanix_settings/features/wireless/data/models/enums.dart';
 import 'package:mechanix_settings/features/wireless/data/models/wifi_network.dart';
 import 'package:mechanix_settings/features/wireless/presentation/screens/add_network.dart';
 import 'package:mechanix_settings/features/wireless/presentation/screens/manage_network.dart';
 import 'package:mechanix_settings/features/wireless/presentation/screens/network_detail.dart';
 import 'package:mechanix_settings/features/wireless/presentation/widgets/network_list_item.dart';
+import 'package:mechanix_settings/features/wireless/presentation/widgets/wireless/enterprise_connection_sheet.dart';
 import 'package:mechanix_settings/features/wireless/presentation/widgets/wireless_settings/settings_section_header.dart';
 import 'package:mechanix_settings/l10n/app_localizations.dart';
 
@@ -40,13 +42,45 @@ class WirelessBody extends StatelessWidget {
   }
 }
 
-void _connectToNetwork(BuildContext context, WifiNetwork network) {
+void _connectToNetwork(BuildContext context, WifiNetwork network) async {
   final bloc = context.read<WirelessBloc>();
 
   if (bloc.state.connectedNetworkName == network.name) {
     return;
   }
-  bloc.add(ConnectToNetworkEvent(network.name, null));
+
+  if (network.isSecured) {
+    // If it's already a saved network, we can connect directly (NetworkManager will use saved credentials)
+    final isSaved = bloc.state.myNetworks.any((n) => n.name == network.name);
+    if (isSaved) {
+      bloc.add(ConnectToNetworkEvent(network.name, null));
+      return;
+    }
+
+    // For unsaved secured networks:
+    if (network.security == WirelessSecurity.wpawpa2Enterprise ||
+        network.security == WirelessSecurity.leap) {
+      final config = await showEnterpriseConnectionBottomSheet(
+        context,
+        network,
+      );
+      if (config != null && context.mounted) {
+        bloc.add(
+          ConnectToNetworkEvent(
+            network.name,
+            config.password,
+            enterpriseConfig: config,
+          ),
+        );
+      }
+    } else {
+      // For personal/WEP networks, delegate to GNOME agent (system dialog)
+      bloc.add(ConnectToNetworkEvent(network.name, null));
+    }
+  } else {
+    // Open network, connect directly
+    bloc.add(ConnectToNetworkEvent(network.name, null));
+  }
 }
 
 class _WirelessToggle extends StatelessWidget {

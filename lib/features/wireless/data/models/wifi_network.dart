@@ -7,6 +7,8 @@ class WifiNetwork extends Equatable {
 
   final int signalLevel;
   final bool isSecured;
+  final WirelessSecurity security;
+  final EnterpriseEapMethod? eapMethod;
   final bool isConnected;
   final bool isConnecting;
   final bool autoJoin;
@@ -31,6 +33,8 @@ class WifiNetwork extends Equatable {
     this.password = '',
     this.signalLevel = 3,
     this.isSecured = true,
+    this.security = WirelessSecurity.none,
+    this.eapMethod,
     this.isConnected = false,
     this.isConnecting = false,
     this.autoJoin = true,
@@ -56,6 +60,8 @@ class WifiNetwork extends Equatable {
     String? password,
     int? signalLevel,
     bool? isSecured,
+    WirelessSecurity? security,
+    EnterpriseEapMethod? eapMethod,
     bool? isConnected,
     bool? isConnecting,
     bool? autoJoin,
@@ -78,6 +84,8 @@ class WifiNetwork extends Equatable {
 
       signalLevel: signalLevel ?? this.signalLevel,
       isSecured: isSecured ?? this.isSecured,
+      security: security ?? this.security,
+      eapMethod: eapMethod ?? this.eapMethod,
       isConnected: isConnected ?? this.isConnected,
       isConnecting: isConnecting ?? this.isConnecting,
       autoJoin: autoJoin ?? this.autoJoin,
@@ -102,6 +110,8 @@ class WifiNetwork extends Equatable {
     password,
     signalLevel,
     isSecured,
+    security,
+    eapMethod,
     isConnected,
     isConnecting,
     autoJoin,

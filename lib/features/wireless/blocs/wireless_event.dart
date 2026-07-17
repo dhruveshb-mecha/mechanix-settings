@@ -35,10 +35,11 @@ class ScanNetworks extends WirelessEvent {
 class ConnectToNetworkEvent extends WirelessEvent {
   final String name;
   final String? password;
-  const ConnectToNetworkEvent(this.name, this.password);
+  final EnterpriseConfig? enterpriseConfig;
+  const ConnectToNetworkEvent(this.name, this.password, {this.enterpriseConfig});
 
   @override
-  List<Object?> get props => [name, password];
+  List<Object?> get props => [name, password, enterpriseConfig];
 }
 
 class AddNetworkEvent extends WirelessEvent {

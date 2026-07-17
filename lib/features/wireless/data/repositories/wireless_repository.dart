@@ -22,7 +22,11 @@ abstract class WirelessRepository {
     List<WifiNetwork>? savedNetworks,
   });
 
-  Future<void> connectToNetwork(String name, String? password);
+  Future<void> connectToNetwork(
+    String name,
+    String? password, {
+    EnterpriseConfig? enterpriseConfig,
+  });
   Future<void> addNetwork(
     String name,
     WirelessSecurity security,

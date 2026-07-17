@@ -151,6 +151,69 @@ class WifiParser {
     );
   }
 
+  static WirelessSecurity parseSecurityType({
+    required String name,
+    NetworkManagerAccessPoint? ap,
+    NetworkManagerSettingsConnection? connection,
+    Map<String, Map<String, DBusValue>>? settings,
+  }) {
+    if (settings != null) {
+      final sec = settings['802-11-wireless-security'];
+      if (sec != null) {
+        final keyMgmt = sec['key-mgmt']?.toNative()?.toString();
+        if (keyMgmt == 'wpa-eap') {
+          return WirelessSecurity.wpawpa2Enterprise;
+        } else if (keyMgmt == 'ieee8021x') {
+          return WirelessSecurity.leap;
+        } else if (keyMgmt == 'sae') {
+          return WirelessSecurity.wpa3Personal;
+        } else if (keyMgmt == 'wpa-psk') {
+          return WirelessSecurity.wpaWpa2Personal;
+        } else if (keyMgmt == 'owe') {
+          return WirelessSecurity.enhancedOpen;
+        } else if (keyMgmt == 'none') {
+          return WirelessSecurity.wep;
+        }
+      }
+    }
+
+    if (ap != null) {
+      final isSecured = ap.wpaFlags.isNotEmpty || ap.rsnFlags.isNotEmpty;
+      if (isSecured) {
+        final keyMgmt = NetworkManagerUtils.keyMgmtFromAccessPoint(ap);
+        if (keyMgmt == 'sae') {
+          return WirelessSecurity.wpa3Personal;
+        } else if (keyMgmt == 'wpa-eap') {
+          return WirelessSecurity.wpawpa2Enterprise;
+        } else if (keyMgmt == 'wpa-psk') {
+          return WirelessSecurity.wpaWpa2Personal;
+        } else {
+          return WirelessSecurity.wep;
+        }
+      }
+    }
+
+    return WirelessSecurity.none;
+  }
+
+  static EnterpriseEapMethod? parseEapMethod(
+    Map<String, Map<String, DBusValue>>? settings,
+  ) {
+    final x1 = settings?['802-1x'];
+    if (x1 != null) {
+      final eapVal = x1['eap'];
+      if (eapVal is DBusArray && eapVal.children.isNotEmpty) {
+        final eapStr = eapVal.children.first.toNative().toString();
+        for (final val in EnterpriseEapMethod.values) {
+          if (val.nmValue == eapStr) {
+            return val;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   static bool parseAutoConnect(Map<String, Map<String, DBusValue>>? settings) {
     try {
       final value = settings?['connection']?['autoconnect']?.toNative();

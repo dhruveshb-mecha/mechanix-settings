@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:dbus/dbus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mechanix_settings/features/wireless/data/models/enterprise_config.dart';
+import 'package:mechanix_settings/features/wireless/data/utils/enterprise_connection_builder.dart';
 import 'package:mechanix_settings/features/wireless/data/utils/network_connection_builder.dart';
 import 'package:mechanix_settings/features/wireless/data/utils/network_manager_utils.dart';
 import 'package:mechanix_settings/features/wireless/data/utils/wifi_parser.dart';
@@ -228,7 +229,11 @@ class WirelessRepositoryImpl implements WirelessRepository {
   /// - If new, builds the D-Bus connection settings map, enables autoconnect,
   ///   delegates password acquisition to the agent, and triggers activation.
   @override
-  Future<void> connectToNetwork(String name, String? password) async {
+  Future<void> connectToNetwork(
+    String name,
+    String? password, {
+    EnterpriseConfig? enterpriseConfig,
+  }) async {
     if (!_connected) return;
     final wifiDevice = await getWifiDevice();
     if (wifiDevice == null ||
@@ -304,22 +309,14 @@ class WirelessRepositoryImpl implements WirelessRepository {
             'psk-flags': const DBusUint32(1),
           };
         } else if (keyMgmt == 'wpa-eap') {
-          // TODO : update connection settings for WPA2 Enterprise with EAP methods and credentials.
+          final isLeap = enterpriseConfig?.method == EnterpriseEapMethod.leap;
           connection['802-11-wireless-security'] = {
-            'key-mgmt': const DBusString('wpa-eap'),
+            'key-mgmt': DBusString(isLeap ? 'ieee8021x' : 'wpa-eap'),
           };
-          connection['802-1x'] = {
-            'eap': DBusArray(DBusSignature.string, [
-              const DBusString('leap'),
-              const DBusString('md5'),
-              const DBusString('tls'),
-              const DBusString('peap'),
-              const DBusString('ttls'),
-              const DBusString('pwd'),
-              const DBusString('fast'),
-            ]),
-            'password-flags': const DBusUint32(1),
-          };
+          connection['802-1x'] = EnterpriseConnectionBuilder.build8021xSettings(
+            enterpriseConfig ??
+                const EnterpriseConfig(method: EnterpriseEapMethod.peap),
+          );
         } else if (keyMgmt == 'none') {
           connection['802-11-wireless-security'] = {
             'key-mgmt': const DBusString('none'),
@@ -686,6 +683,15 @@ class WirelessRepositoryImpl implements WirelessRepository {
       settings: settings,
     );
 
+    final security = WifiParser.parseSecurityType(
+      name: name,
+      ap: ap,
+      connection: connection,
+      settings: settings,
+    );
+
+    final eapMethod = WifiParser.parseEapMethod(settings);
+
     final signalLevel = WifiParser.parseSignalLevel(ap);
 
     final connectionState = await _getConnectionState(name: name, ap: ap);
@@ -740,6 +746,8 @@ class WirelessRepositoryImpl implements WirelessRepository {
     return WifiNetwork(
       name: name,
       password: password,
+      security: security,
+      eapMethod: eapMethod,
       signalLevel: signalLevel,
       isSecured: isSecured,
       isConnected: isConnected,
