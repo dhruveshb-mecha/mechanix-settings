@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:dbus/dbus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mechanix_settings/features/wireless/data/models/enterprise_config.dart';
+import 'package:mechanix_settings/features/wireless/data/utils/network_connection_builder.dart';
 import 'package:mechanix_settings/features/wireless/data/utils/network_manager_utils.dart';
 import 'package:mechanix_settings/features/wireless/data/utils/wifi_parser.dart';
 import 'package:nm/nm.dart';
@@ -347,15 +349,27 @@ class WirelessRepositoryImpl implements WirelessRepository {
     }
   }
 
+  /// Creates and immediately activates a hidden Wi-Fi network profile.
+  ///
+  /// If a saved profile with the same SSID already exists, it is reused instead
+  /// of creating a duplicate connection.
+  ///
+  /// For enterprise networks, [enterpriseConfig] must contain the required
+  /// 802.1X/EAP configuration.
   @override
-  Future<void> addNetwork(String name, WirelessSecurity security) async {
+  Future<void> addNetwork(
+    String name,
+    WirelessSecurity security,
+    EnterpriseConfig? enterpriseConfig,
+  ) async {
     final wifiDevice = await getWifiDevice();
 
     if (wifiDevice == null) {
       throw Exception('No Wi-Fi device found');
     }
 
-    // Reuse an existing profile if present.
+    // Reuse an existing connection profile for this hidden network if one
+    // already exists. This avoids creating duplicate saved connections.
     final existingConnection = await _findExistingConnection(ssid: name);
     if (existingConnection != null) {
       AppLogger.i(
@@ -373,71 +387,37 @@ class WirelessRepositoryImpl implements WirelessRepository {
       'Creating hidden network profile for $name with security $security',
     );
 
+    // Base NetworkManager connection settings.
+    //
+    // Security-specific configuration (WEP/WPA/WPA3/Enterprise) is applied
+    // separately by NetworkConnectionBuilder.
     final connection = <String, Map<String, DBusValue>>{
-      'connection': <String, DBusValue>{
+      'connection': {
         'id': DBusString(name),
         'type': const DBusString('802-11-wireless'),
         'autoconnect': const DBusBoolean(true),
       },
-      '802-11-wireless': <String, DBusValue>{
+      '802-11-wireless': {
         'ssid': DBusArray(
           DBusSignature.byte,
-          utf8.encode(name).map((b) => DBusByte(b)).toList(),
+          utf8.encode(name).map(DBusByte.new).toList(),
         ),
         'mode': const DBusString('infrastructure'),
         'hidden': const DBusBoolean(true),
       },
-      'ipv4': <String, DBusValue>{'method': const DBusString('auto')},
-      'ipv6': <String, DBusValue>{'method': const DBusString('ignore')},
+      'ipv4': {'method': const DBusString('auto')},
+      'ipv6': {'method': const DBusString('ignore')},
     };
 
-    switch (security) {
-      case WirelessSecurity.none:
-        // Open network.
-        break;
+    // Apply security configuration, including 802.1X settings for
+    // enterprise networks when required.
+    NetworkConnectionBuilder.applySecuritySettings(
+      connection: connection,
+      security: security,
+      enterpriseConfig: enterpriseConfig,
+    );
 
-      case WirelessSecurity.wep:
-        connection['802-11-wireless-security'] = {
-          'key-mgmt': const DBusString('none'),
-          'wep-key-flags': const DBusUint32(1),
-        };
-        break;
-
-      case WirelessSecurity.wpa:
-      case WirelessSecurity.wpa2Wpa3:
-        connection['802-11-wireless-security'] = {
-          'key-mgmt': const DBusString('wpa-psk'),
-          'psk-flags': const DBusUint32(1),
-        };
-        break;
-
-      case WirelessSecurity.wpa3:
-        connection['802-11-wireless-security'] = {
-          'key-mgmt': const DBusString('sae'),
-          'psk-flags': const DBusUint32(1),
-        };
-        break;
-
-      case WirelessSecurity.wpa2Enterprise:
-        // TODO : update connection settings for WPA2 Enterprise with EAP methods and credentials.
-
-        connection['802-11-wireless-security'] = <String, DBusValue>{
-          'key-mgmt': const DBusString('wpa-eap'),
-        };
-        connection['802-1x'] = <String, DBusValue>{
-          'eap': DBusArray(DBusSignature.string, [
-            const DBusString('leap'),
-            const DBusString('md5'),
-            const DBusString('tls'),
-            const DBusString('peap'),
-            const DBusString('ttls'),
-            const DBusString('pwd'),
-            const DBusString('fast'),
-          ]),
-          'password-flags': const DBusUint32(1),
-        };
-    }
-
+    // Save the connection profile and immediately activate it.
     await _client.addAndActivateConnection(
       device: wifiDevice,
       connection: connection,

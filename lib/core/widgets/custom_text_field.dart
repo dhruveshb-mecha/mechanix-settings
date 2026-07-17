@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mechanix_settings/core/theme/app_theme.dart';
 
-class CustomTextField extends StatelessWidget {
-  final TextEditingController controller;
+class CustomTextField extends StatefulWidget {
+  final TextEditingController? controller;
+  final String? initialValue;
+
   final String hintText;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
@@ -18,7 +20,8 @@ class CustomTextField extends StatelessWidget {
 
   const CustomTextField({
     super.key,
-    required this.controller,
+    this.controller,
+    this.initialValue,
     required this.hintText,
     this.prefixIcon,
     this.suffixIcon,
@@ -31,49 +34,90 @@ class CustomTextField extends StatelessWidget {
     this.enabled = true,
     this.onChanged,
     this.onSubmitted,
-  });
+  }) : assert(
+         controller != null || initialValue != null,
+         'Either controller or initialValue must be provided',
+       );
+
+  @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  late final TextEditingController _controller;
+  late final bool _isInternalController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.controller != null) {
+      _controller = widget.controller!;
+      _isInternalController = false;
+    } else {
+      _controller = TextEditingController(text: widget.initialValue ?? '');
+      _isInternalController = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_isInternalController) {
+      _controller.dispose();
+    }
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        color: AppColors.backgroundVariant,
+        color: widget.enabled
+            ? AppColors.backgroundVariant
+            : AppColors.backgroundVariantDark,
         borderRadius: BorderRadius.circular(8),
       ),
-
       padding: const EdgeInsets.symmetric(horizontal: 8),
+
       child: TextField(
-        controller: controller,
-        focusNode: focusNode,
-        enabled: enabled,
-        keyboardType: keyboardType,
-        textInputAction: textInputAction,
-        obscureText: obscureText,
-        obscuringCharacter: obscuringCharacter,
+        controller: _controller,
+        focusNode: widget.focusNode,
+        enabled: widget.enabled,
+        keyboardType: widget.keyboardType,
+        textInputAction: widget.textInputAction,
+        obscureText: widget.obscureText,
+        obscuringCharacter: widget.obscuringCharacter,
         textAlignVertical: TextAlignVertical.center,
         style: Theme.of(context).textTheme.bodyLarge,
-        onChanged: onChanged,
+
+        onChanged: widget.onChanged,
+
         onSubmitted: (value) {
-          if (nextFocusNode != null) {
-            FocusScope.of(context).requestFocus(nextFocusNode);
+          if (widget.nextFocusNode != null) {
+            FocusScope.of(context).requestFocus(widget.nextFocusNode);
           }
-          onSubmitted?.call(value);
+
+          widget.onSubmitted?.call(value);
         },
+
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: hintText,
+          hintText: widget.hintText,
           hintStyle: Theme.of(context).textTheme.displaySmall,
-          prefixIcon: prefixIcon != null
+
+          prefixIcon: widget.prefixIcon != null
               ? Padding(
                   padding: const EdgeInsets.only(right: 8, left: 8, top: 8),
-                  child: prefixIcon,
+                  child: widget.prefixIcon,
                 )
               : null,
-          suffixIcon: suffixIcon != null
+
+          suffixIcon: widget.suffixIcon != null
               ? Padding(
                   padding: const EdgeInsets.only(right: 8, left: 8, top: 8),
-                  child: suffixIcon,
+                  child: widget.suffixIcon,
                 )
               : null,
         ),

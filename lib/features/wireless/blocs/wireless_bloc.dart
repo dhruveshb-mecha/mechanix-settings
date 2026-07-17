@@ -316,15 +316,12 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
   ) async {
     try {
       _connectionInProgress = true;
-
-      emit(state.copyWith(connectingNetworkName: event.name));
+      emit(state.copyWith(connectingNetworkName: event.name, error: null));
 
       await wirelessRepository.connectToNetwork(event.name, event.password);
     } catch (e, stackTrace) {
       _connectionInProgress = false;
-
-      emit(state.copyWith(connectingNetworkName: null));
-
+      emit(state.copyWith(connectingNetworkName: null, error: e.toString()));
       AppLogger.e("Failed to connect", stack: stackTrace);
     }
   }
@@ -335,7 +332,14 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
     Emitter<WirelessState> emit,
   ) async {
     try {
-      await wirelessRepository.addNetwork(event.name, event.security);
+      _connectionInProgress = true;
+      emit(state.copyWith(connectingNetworkName: event.name, error: null));
+
+      await wirelessRepository.addNetwork(
+        event.name,
+        event.security,
+        event.enterpriseConfig,
+      );
 
       final savedNetworks = await wirelessRepository.getSavedNetworks();
       final myNetworks = await wirelessRepository.getMyNetworks();
@@ -351,6 +355,8 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
         ),
       );
     } catch (e, stackTrace) {
+      _connectionInProgress = false;
+      emit(state.copyWith(connectingNetworkName: null, error: e.toString()));
       AppLogger.e('Failed to add network: $e', stack: stackTrace);
     }
   }

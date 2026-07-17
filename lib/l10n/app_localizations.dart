@@ -370,47 +370,227 @@ abstract class AppLocalizations {
   /// **'Enter password'**
   String get enterPassword;
 
+  /// No description provided for @eapMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication'**
+  String get eapMethod;
+
+  /// No description provided for @phase2Authentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Inner authentication'**
+  String get phase2Authentication;
+
+  /// No description provided for @identity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get identity;
+
+  /// No description provided for @certificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate'**
+  String get certificate;
+
+  /// No description provided for @caCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'CA certificate'**
+  String get caCertificate;
+
+  /// No description provided for @caCertificatePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'CA certificate password'**
+  String get caCertificatePassword;
+
+  /// No description provided for @noCaCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'No CA certificate is required'**
+  String get noCaCertificate;
+
+  /// No description provided for @userCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'User certificate'**
+  String get userCertificate;
+
+  /// No description provided for @userCertificatePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'User certificate password'**
+  String get userCertificatePassword;
+
+  /// No description provided for @privateKey.
+  ///
+  /// In en, this message translates to:
+  /// **'User private key'**
+  String get privateKey;
+
+  /// No description provided for @privateKeyPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'User key password'**
+  String get privateKeyPassword;
+
+  /// No description provided for @selectFromFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select from file'**
+  String get selectFromFile;
+
+  /// No description provided for @networkName.
+  ///
+  /// In en, this message translates to:
+  /// **'Network name'**
+  String get networkName;
+
   /// No description provided for @security.
   ///
   /// In en, this message translates to:
   /// **'Security'**
   String get security;
 
-  /// No description provided for @securityNone.
-  ///
-  /// In en, this message translates to:
-  /// **'None'**
-  String get securityNone;
-
-  /// No description provided for @securityWpa2Wpa3.
-  ///
-  /// In en, this message translates to:
-  /// **'WPA2 / WPA3'**
-  String get securityWpa2Wpa3;
-
-  /// No description provided for @securityWpa3.
-  ///
-  /// In en, this message translates to:
-  /// **'WPA3'**
-  String get securityWpa3;
-
-  /// No description provided for @securityWpa.
-  ///
-  /// In en, this message translates to:
-  /// **'WPA'**
-  String get securityWpa;
-
-  /// No description provided for @securityWpa2Enterprise.
-  ///
-  /// In en, this message translates to:
-  /// **'WPA2 Enterprise'**
-  String get securityWpa2Enterprise;
-
-  /// No description provided for @securityWep.
+  /// No description provided for @wep.
   ///
   /// In en, this message translates to:
   /// **'WEP'**
-  String get securityWep;
+  String get wep;
+
+  /// No description provided for @wpaPersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'WPA Personal'**
+  String get wpaPersonal;
+
+  /// No description provided for @wpa2Personal.
+  ///
+  /// In en, this message translates to:
+  /// **'WPA & WPA2 Personal'**
+  String get wpa2Personal;
+
+  /// No description provided for @wpa3Personal.
+  ///
+  /// In en, this message translates to:
+  /// **'WPA3 Personal'**
+  String get wpa3Personal;
+
+  /// No description provided for @wpaEnterprise.
+  ///
+  /// In en, this message translates to:
+  /// **'WPA & WPA2 Enterprise'**
+  String get wpaEnterprise;
+
+  /// No description provided for @leap.
+  ///
+  /// In en, this message translates to:
+  /// **'LEAP'**
+  String get leap;
+
+  /// No description provided for @enhancedOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Enhanced Open'**
+  String get enhancedOpen;
+
+  /// No description provided for @peap.
+  ///
+  /// In en, this message translates to:
+  /// **'PEAP'**
+  String get peap;
+
+  /// No description provided for @tls.
+  ///
+  /// In en, this message translates to:
+  /// **'TLS'**
+  String get tls;
+
+  /// No description provided for @ttls.
+  ///
+  /// In en, this message translates to:
+  /// **'TTLS'**
+  String get ttls;
+
+  /// No description provided for @pwd.
+  ///
+  /// In en, this message translates to:
+  /// **'PWD'**
+  String get pwd;
+
+  /// No description provided for @version0.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 0'**
+  String get version0;
+
+  /// No description provided for @version1.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1'**
+  String get version1;
+
+  /// No description provided for @pap.
+  ///
+  /// In en, this message translates to:
+  /// **'PAP'**
+  String get pap;
+
+  /// No description provided for @chap.
+  ///
+  /// In en, this message translates to:
+  /// **'CHAP'**
+  String get chap;
+
+  /// No description provided for @mschap.
+  ///
+  /// In en, this message translates to:
+  /// **'MSCHAP'**
+  String get mschap;
+
+  /// No description provided for @mschapv2.
+  ///
+  /// In en, this message translates to:
+  /// **'MSCHAPv2'**
+  String get mschapv2;
+
+  /// No description provided for @mschapv2NoEap.
+  ///
+  /// In en, this message translates to:
+  /// **'MSCHAPv2 (No EAP)'**
+  String get mschapv2NoEap;
+
+  /// No description provided for @md5.
+  ///
+  /// In en, this message translates to:
+  /// **'MD5'**
+  String get md5;
+
+  /// No description provided for @gtc.
+  ///
+  /// In en, this message translates to:
+  /// **'GTC'**
+  String get gtc;
+
+  /// No description provided for @peapVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'PEAP Version'**
+  String get peapVersion;
+
+  /// No description provided for @anonymousIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous Identity'**
+  String get anonymousIdentity;
+
+  /// No description provided for @domain.
+  ///
+  /// In en, this message translates to:
+  /// **'Domain'**
+  String get domain;
 
   /// No description provided for @fixed.
   ///

@@ -11,6 +11,7 @@ class WirelessState extends Equatable {
   final List<WifiNetwork> myNetworks;
   final String? connectingNetworkName;
   final String? connectedNetworkName;
+  final String? error;
 
   const WirelessState({
     this.isWirelessOn = false,
@@ -20,6 +21,7 @@ class WirelessState extends Equatable {
     this.myNetworks = const [],
     this.connectingNetworkName,
     this.connectedNetworkName,
+    this.error,
   });
 
   WirelessState copyWith({
@@ -30,6 +32,7 @@ class WirelessState extends Equatable {
     List<WifiNetwork>? myNetworks,
     Object? connectingNetworkName = _unset,
     Object? connectedNetworkName = _unset,
+    Object? error = _unset,
   }) {
     return WirelessState(
       isWirelessOn: isWirelessOn ?? this.isWirelessOn,
@@ -43,6 +46,7 @@ class WirelessState extends Equatable {
       connectedNetworkName: connectedNetworkName == _unset
           ? this.connectedNetworkName
           : connectedNetworkName as String?,
+      error: error == _unset ? this.error : error as String?,
     );
   }
 
@@ -54,5 +58,6 @@ class WirelessState extends Equatable {
     availableNetworks,
     connectingNetworkName,
     connectedNetworkName,
+    error,
   ];
 }

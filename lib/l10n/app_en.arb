@@ -54,13 +54,52 @@
   "off": "Off",
   "enterPassword": "Enter password",
 
+  "eapMethod": "Authentication",
+  "phase2Authentication": "Inner authentication",
+  "identity": "Identity",
+
+  "certificate": "Certificate",
+  "caCertificate": "CA certificate",
+  "caCertificatePassword": "CA certificate password",
+  "noCaCertificate": "No CA certificate is required",
+
+
+  "userCertificate": "User certificate",
+  "userCertificatePassword" : "User certificate password",
+  "privateKey": "User private key",
+  "privateKeyPassword": "User key password",
+
+  "selectFromFile": "Select from file",
+  "networkName" : "Network name",
+
   "security": "Security",
-  "securityNone": "None",
-  "securityWpa2Wpa3": "WPA2 / WPA3",
-  "securityWpa3": "WPA3",
-  "securityWpa": "WPA",
-  "securityWpa2Enterprise": "WPA2 Enterprise",
-  "securityWep": "WEP",
+  "wep": "WEP",
+  "wpaPersonal": "WPA Personal",
+  "wpa2Personal": "WPA & WPA2 Personal",
+  "wpa3Personal": "WPA3 Personal",
+  "wpaEnterprise": "WPA & WPA2 Enterprise",
+  "leap": "LEAP",
+  "enhancedOpen": "Enhanced Open",
+  
+  "peap": "PEAP",
+  "tls": "TLS",
+  "ttls": "TTLS",
+  "pwd": "PWD",
+
+  "version0": "Version 0",
+  "version1": "Version 1",
+
+  "pap": "PAP",
+  "chap": "CHAP",
+  "mschap": "MSCHAP",
+  "mschapv2": "MSCHAPv2",
+  "mschapv2NoEap": "MSCHAPv2 (No EAP)",
+  "md5": "MD5",
+  "gtc": "GTC",
+
+  "peapVersion" : "PEAP Version",
+  "anonymousIdentity" : "Anonymous Identity",
+  "domain" : "Domain",
 
   "fixed": "Fixed",
   "randomized": "Randomized",

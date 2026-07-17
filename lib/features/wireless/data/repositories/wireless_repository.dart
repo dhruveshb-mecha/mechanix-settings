@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:mechanix_settings/features/wireless/data/models/enterprise_config.dart';
 import 'package:nm/nm.dart';
 import 'package:mechanix_settings/features/wireless/data/models/wifi_network.dart';
 import 'package:mechanix_settings/features/wireless/data/models/enums.dart';
@@ -22,7 +23,11 @@ abstract class WirelessRepository {
   });
 
   Future<void> connectToNetwork(String name, String? password);
-  Future<void> addNetwork(String name, WirelessSecurity security);
+  Future<void> addNetwork(
+    String name,
+    WirelessSecurity security,
+    EnterpriseConfig? enterpriseConfig,
+  );
   Future<void> updateNetwork(WifiNetwork updatedNetwork);
 
   Future<void> updateIPSettings(

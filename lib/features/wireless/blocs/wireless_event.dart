@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:mechanix_settings/features/wireless/data/models/enterprise_config.dart';
 import 'package:mechanix_settings/features/wireless/data/models/wifi_network.dart';
 import 'package:mechanix_settings/features/wireless/data/models/enums.dart';
 
@@ -43,11 +44,16 @@ class ConnectToNetworkEvent extends WirelessEvent {
 class AddNetworkEvent extends WirelessEvent {
   final String name;
   final WirelessSecurity security;
+  final EnterpriseConfig? enterpriseConfig;
 
-  const AddNetworkEvent(this.name, this.security);
+  const AddNetworkEvent(
+    this.name,
+    this.security, {
+    this.enterpriseConfig,
+  });
 
   @override
-  List<Object?> get props => [name, security];
+  List<Object?> get props => [name, security, enterpriseConfig];
 }
 
 class UpdateNetworkSettingsEvent extends WirelessEvent {

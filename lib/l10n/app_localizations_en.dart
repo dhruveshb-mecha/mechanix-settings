@@ -149,25 +149,115 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterPassword => 'Enter password';
 
   @override
+  String get eapMethod => 'Authentication';
+
+  @override
+  String get phase2Authentication => 'Inner authentication';
+
+  @override
+  String get identity => 'Identity';
+
+  @override
+  String get certificate => 'Certificate';
+
+  @override
+  String get caCertificate => 'CA certificate';
+
+  @override
+  String get caCertificatePassword => 'CA certificate password';
+
+  @override
+  String get noCaCertificate => 'No CA certificate is required';
+
+  @override
+  String get userCertificate => 'User certificate';
+
+  @override
+  String get userCertificatePassword => 'User certificate password';
+
+  @override
+  String get privateKey => 'User private key';
+
+  @override
+  String get privateKeyPassword => 'User key password';
+
+  @override
+  String get selectFromFile => 'Select from file';
+
+  @override
+  String get networkName => 'Network name';
+
+  @override
   String get security => 'Security';
 
   @override
-  String get securityNone => 'None';
+  String get wep => 'WEP';
 
   @override
-  String get securityWpa2Wpa3 => 'WPA2 / WPA3';
+  String get wpaPersonal => 'WPA Personal';
 
   @override
-  String get securityWpa3 => 'WPA3';
+  String get wpa2Personal => 'WPA & WPA2 Personal';
 
   @override
-  String get securityWpa => 'WPA';
+  String get wpa3Personal => 'WPA3 Personal';
 
   @override
-  String get securityWpa2Enterprise => 'WPA2 Enterprise';
+  String get wpaEnterprise => 'WPA & WPA2 Enterprise';
 
   @override
-  String get securityWep => 'WEP';
+  String get leap => 'LEAP';
+
+  @override
+  String get enhancedOpen => 'Enhanced Open';
+
+  @override
+  String get peap => 'PEAP';
+
+  @override
+  String get tls => 'TLS';
+
+  @override
+  String get ttls => 'TTLS';
+
+  @override
+  String get pwd => 'PWD';
+
+  @override
+  String get version0 => 'Version 0';
+
+  @override
+  String get version1 => 'Version 1';
+
+  @override
+  String get pap => 'PAP';
+
+  @override
+  String get chap => 'CHAP';
+
+  @override
+  String get mschap => 'MSCHAP';
+
+  @override
+  String get mschapv2 => 'MSCHAPv2';
+
+  @override
+  String get mschapv2NoEap => 'MSCHAPv2 (No EAP)';
+
+  @override
+  String get md5 => 'MD5';
+
+  @override
+  String get gtc => 'GTC';
+
+  @override
+  String get peapVersion => 'PEAP Version';
+
+  @override
+  String get anonymousIdentity => 'Anonymous Identity';
+
+  @override
+  String get domain => 'Domain';
 
   @override
   String get fixed => 'Fixed';

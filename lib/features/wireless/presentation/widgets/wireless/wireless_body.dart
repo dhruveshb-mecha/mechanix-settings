@@ -9,9 +9,9 @@ import 'package:mechanix_settings/core/widgets/custom_image_asset.dart';
 import 'package:mechanix_settings/core/widgets/custom_toggle.dart';
 import 'package:mechanix_settings/features/wireless/blocs/wireless_bloc.dart';
 import 'package:mechanix_settings/features/wireless/data/models/wifi_network.dart';
+import 'package:mechanix_settings/features/wireless/presentation/screens/add_network.dart';
 import 'package:mechanix_settings/features/wireless/presentation/screens/manage_network.dart';
 import 'package:mechanix_settings/features/wireless/presentation/screens/network_detail.dart';
-import 'package:mechanix_settings/features/wireless/presentation/widgets/add_network.dart';
 import 'package:mechanix_settings/features/wireless/presentation/widgets/network_list_item.dart';
 import 'package:mechanix_settings/features/wireless/presentation/widgets/wireless_settings/settings_section_header.dart';
 import 'package:mechanix_settings/l10n/app_localizations.dart';
@@ -150,7 +150,12 @@ class _AddNetworkTile extends StatelessWidget {
             l10n.addWireless,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          onTap: () => showAddNetworkBottomSheet(context),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AddNetworkPage()),
+            );
+          },
         ),
         const CustomDivider(verticalPadding: 16),
       ],

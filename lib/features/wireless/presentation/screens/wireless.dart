@@ -27,7 +27,21 @@ class _WirelessScreenState extends State<WirelessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: WirelessAppBar(breadcrumbController: _breadcrumbController),
-      body: const WirelessBody(),
+      body: BlocListener<WirelessBloc, WirelessState>(
+        listenWhen: (previous, current) =>
+            current.error != null && previous.error != current.error,
+        listener: (context, state) {
+          if (state.error != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error!),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          }
+        },
+        child: const WirelessBody(),
+      ),
       bottomNavigationBar:
           BlocSelector<
             WirelessBloc,
