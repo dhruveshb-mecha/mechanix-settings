@@ -20,8 +20,21 @@ class WirelessRepositoryImpl implements WirelessRepository {
   bool _connected = false;
   late NetworkManagerClient _client;
 
+  /// Creates a wireless repository instance.
+  ///
+  /// The optional [NetworkManagerClient] is primarily used for unit tests
+  /// to inject a mock client instead of establishing a real NetworkManager
+  /// connection.
+  WirelessRepositoryImpl({NetworkManagerClient? client}) {
+    if (client != null) {
+      _client = client;
+      _connected = true;
+    }
+  }
+
   @override
   Future<void> init() async {
+    if (_connected) return;
     try {
       _client = NetworkManagerClient();
       await _client.connect();
