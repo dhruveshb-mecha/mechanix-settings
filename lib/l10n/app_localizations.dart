@@ -819,6 +819,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pair'**
   String get pair;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get fieldRequired;
+
+  /// No description provided for @networkNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Network name is required'**
+  String get networkNameRequired;
+
+  /// No description provided for @identityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity is required'**
+  String get identityRequired;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordRequired;
+
+  /// No description provided for @domainRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Domain is required'**
+  String get domainRequired;
+
+  /// No description provided for @caCertificateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'CA certificate is required'**
+  String get caCertificateRequired;
+
+  /// No description provided for @userCertificateRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'User certificate is required'**
+  String get userCertificateRequired;
+
+  /// No description provided for @privateKeyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Private key is required'**
+  String get privateKeyRequired;
+
+  /// No description provided for @invalidDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid domain name'**
+  String get invalidDomain;
+
+  /// No description provided for @connectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to network'**
+  String get connectionFailed;
+
+  /// No description provided for @connectionFailedWithNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to {networkName}'**
+  String connectionFailedWithNetwork(String networkName);
+
+  /// No description provided for @addNetworkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add network'**
+  String get addNetworkFailed;
+
+  /// No description provided for @addNetworkFailedWithNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add network {networkName}'**
+  String addNetworkFailedWithNetwork(String networkName);
+
+  /// No description provided for @unknownError.
+  ///
+  /// In en, this message translates to:
+  /// **'An unknown error occurred'**
+  String get unknownError;
 }
 
 class _AppLocalizationsDelegate

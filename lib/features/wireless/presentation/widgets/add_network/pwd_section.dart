@@ -7,8 +7,14 @@ import 'package:mechanix_settings/l10n/app_localizations.dart';
 class PwdSection extends StatefulWidget {
   final EnterpriseConfig config;
   final ValueChanged<EnterpriseConfig> onChanged;
+  final Map<String, String>? errors;
 
-  const PwdSection({super.key, required this.config, required this.onChanged});
+  const PwdSection({
+    super.key,
+    required this.config,
+    required this.onChanged,
+    this.errors,
+  });
 
   @override
   State<PwdSection> createState() => _PwdSectionState();
@@ -30,7 +36,8 @@ class _PwdSectionState extends State<PwdSection> {
           label: l10n.identity,
           child: CustomTextField(
             initialValue: config.identity,
-            hintText: l10n.identity,
+            hintText: '',
+            errorText: widget.errors?['identity'],
             onChanged: (value) {
               onChanged(config.copyWith(identity: value));
             },
@@ -43,8 +50,9 @@ class _PwdSectionState extends State<PwdSection> {
           label: l10n.password,
           child: CustomTextField(
             initialValue: config.password,
-            hintText: l10n.password,
+            hintText: '',
             obscureText: _obscurePassword,
+            errorText: widget.errors?['password'],
 
             suffixIcon: IconButton(
               icon: Icon(

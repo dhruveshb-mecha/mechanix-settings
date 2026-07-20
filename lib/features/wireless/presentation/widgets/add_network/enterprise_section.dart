@@ -13,11 +13,13 @@ import 'package:mechanix_settings/l10n/app_localizations.dart';
 class EnterpriseSection extends StatelessWidget {
   final EnterpriseConfig config;
   final ValueChanged<EnterpriseConfig> onChanged;
+  final Map<String, String>? errors;
 
   const EnterpriseSection({
     super.key,
     required this.config,
     required this.onChanged,
+    this.errors,
   });
 
   @override
@@ -71,26 +73,31 @@ class EnterpriseSection extends StatelessWidget {
           EnterpriseEapMethod.peap => PeapSection(
             config: config,
             onChanged: onChanged,
+            errors: errors,
           ),
 
           EnterpriseEapMethod.ttls => TtlsSection(
             config: config,
             onChanged: onChanged,
+            errors: errors,
           ),
 
           EnterpriseEapMethod.tls => TlsSection(
             config: config,
             onChanged: onChanged,
+            errors: errors,
           ),
 
           EnterpriseEapMethod.pwd => PwdSection(
             config: config,
             onChanged: onChanged,
+            errors: errors,
           ),
 
           EnterpriseEapMethod.leap => LeapSection(
             config: config,
             onChanged: onChanged,
+            errors: errors,
           ),
         },
       ],

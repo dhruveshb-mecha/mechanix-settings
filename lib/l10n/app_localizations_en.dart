@@ -379,4 +379,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pair => 'Pair';
+
+  @override
+  String get fieldRequired => 'This field is required';
+
+  @override
+  String get networkNameRequired => 'Network name is required';
+
+  @override
+  String get identityRequired => 'Identity is required';
+
+  @override
+  String get passwordRequired => 'Password is required';
+
+  @override
+  String get domainRequired => 'Domain is required';
+
+  @override
+  String get caCertificateRequired => 'CA certificate is required';
+
+  @override
+  String get userCertificateRequired => 'User certificate is required';
+
+  @override
+  String get privateKeyRequired => 'Private key is required';
+
+  @override
+  String get invalidDomain => 'Enter a valid domain name';
+
+  @override
+  String get connectionFailed => 'Failed to connect to network';
+
+  @override
+  String connectionFailedWithNetwork(String networkName) {
+    return 'Failed to connect to $networkName';
+  }
+
+  @override
+  String get addNetworkFailed => 'Failed to add network';
+
+  @override
+  String addNetworkFailedWithNetwork(String networkName) {
+    return 'Failed to add network $networkName';
+  }
+
+  @override
+  String get unknownError => 'An unknown error occurred';
 }

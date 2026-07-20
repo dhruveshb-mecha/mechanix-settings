@@ -11,6 +11,7 @@ class CertificateSelector extends StatelessWidget {
   final bool allowNone;
   final ValueChanged<CertificateSelection>? onChanged;
   final bool enabled;
+  final String? errorText;
 
   const CertificateSelector({
     super.key,
@@ -19,6 +20,7 @@ class CertificateSelector extends StatelessWidget {
     required this.onChanged,
     this.allowNone = false,
     this.enabled = true,
+    this.errorText,
   });
 
   CertificateType? _currentValue() {
@@ -96,6 +98,16 @@ class CertificateSelector extends StatelessWidget {
               value!.path!,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        if (errorText != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 186, top: 4),
+            child: Text(
+              errorText!,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
             ),
           ),
       ],

@@ -9,8 +9,14 @@ import 'package:mechanix_settings/l10n/app_localizations.dart';
 class TlsSection extends StatefulWidget {
   final EnterpriseConfig config;
   final ValueChanged<EnterpriseConfig> onChanged;
+  final Map<String, String>? errors;
 
-  const TlsSection({super.key, required this.config, required this.onChanged});
+  const TlsSection({
+    super.key,
+    required this.config,
+    required this.onChanged,
+    this.errors,
+  });
 
   @override
   State<TlsSection> createState() => _TlsSectionState();
@@ -37,6 +43,7 @@ class _TlsSectionState extends State<TlsSection> {
           child: CustomTextField(
             initialValue: config.identity,
             hintText: '',
+            errorText: widget.errors?['identity'],
             onChanged: (value) {
               onChanged(config.copyWith(identity: value));
             },
@@ -50,6 +57,7 @@ class _TlsSectionState extends State<TlsSection> {
           child: CustomTextField(
             initialValue: config.domain,
             hintText: '',
+            errorText: widget.errors?['domain'],
             onChanged: (value) {
               onChanged(config.copyWith(domain: value));
             },
@@ -63,6 +71,7 @@ class _TlsSectionState extends State<TlsSection> {
           value: config.caCertificate,
           allowNone: true,
           enabled: !noCaCertificate,
+          errorText: widget.errors?['caCertificate'],
           onChanged: (value) {
             if (noCaCertificate) return;
 
@@ -134,6 +143,7 @@ class _TlsSectionState extends State<TlsSection> {
           title: l10n.userCertificate,
           value: config.userCertificate,
           allowNone: true,
+          errorText: widget.errors?['userCertificate'],
           onChanged: (value) {
             onChanged(config.copyWith(userCertificate: value));
           },
@@ -174,6 +184,7 @@ class _TlsSectionState extends State<TlsSection> {
           title: l10n.privateKey,
           value: config.privateKey,
           allowNone: true,
+          errorText: widget.errors?['privateKey'],
           onChanged: (value) {
             onChanged(config.copyWith(privateKey: value));
           },

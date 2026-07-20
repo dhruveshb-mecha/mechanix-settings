@@ -349,3 +349,5 @@ extension EnterprisePhase2AuthX on EnterprisePhase2Auth {
 }
 
 enum CertificateType { none, file }
+
+enum WirelessErrorType { connectionFailed, addNetworkFailed, unknown }

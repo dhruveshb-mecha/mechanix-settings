@@ -177,5 +177,34 @@
   "speakerType": "Speaker",
   "otherType": "Other",
   "cancel": "Cancel",
-  "pair": "Pair"
+  "pair": "Pair",
+
+  "fieldRequired": "This field is required",
+  "networkNameRequired": "Network name is required",
+  "identityRequired": "Identity is required",
+  "passwordRequired": "Password is required",
+  "domainRequired": "Domain is required",
+  "caCertificateRequired": "CA certificate is required",
+  "userCertificateRequired": "User certificate is required",
+  "privateKeyRequired": "Private key is required",
+  "invalidDomain": "Enter a valid domain name",
+  "connectionFailed": "Failed to connect to network",
+  "connectionFailedWithNetwork": "Failed to connect to {networkName}",
+  "@connectionFailedWithNetwork": {
+    "placeholders": {
+      "networkName": {
+        "type": "String"
+      }
+    }
+  },
+  "addNetworkFailed": "Failed to add network",
+  "addNetworkFailedWithNetwork": "Failed to add network {networkName}",
+  "@addNetworkFailedWithNetwork": {
+    "placeholders": {
+      "networkName": {
+        "type": "String"
+      }
+    }
+  },
+  "unknownError": "An unknown error occurred"
 }

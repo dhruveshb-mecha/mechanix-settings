@@ -10,8 +10,14 @@ import 'package:mechanix_settings/l10n/app_localizations.dart';
 class TtlsSection extends StatefulWidget {
   final EnterpriseConfig config;
   final ValueChanged<EnterpriseConfig> onChanged;
+  final Map<String, String>? errors;
 
-  const TtlsSection({super.key, required this.config, required this.onChanged});
+  const TtlsSection({
+    super.key,
+    required this.config,
+    required this.onChanged,
+    this.errors,
+  });
 
   @override
   State<TtlsSection> createState() => _TtlsSectionState();
@@ -51,6 +57,7 @@ class _TtlsSectionState extends State<TtlsSection> {
           child: CustomTextField(
             initialValue: config.domain,
             hintText: '',
+            errorText: widget.errors?['domain'],
             onChanged: (value) {
               onChanged(config.copyWith(domain: value));
             },
@@ -64,6 +71,7 @@ class _TtlsSectionState extends State<TtlsSection> {
           value: config.caCertificate,
           allowNone: true,
           enabled: !noCaCertificate,
+          errorText: widget.errors?['caCertificate'],
           onChanged: (value) {
             if (noCaCertificate) return;
 
@@ -167,6 +175,7 @@ class _TtlsSectionState extends State<TtlsSection> {
           child: CustomTextField(
             initialValue: config.identity,
             hintText: '',
+            errorText: widget.errors?['identity'],
             onChanged: (value) {
               onChanged(config.copyWith(identity: value));
             },
@@ -181,6 +190,7 @@ class _TtlsSectionState extends State<TtlsSection> {
             initialValue: config.password,
             hintText: '',
             obscureText: _obscurePassword,
+            errorText: widget.errors?['password'],
 
             suffixIcon: IconButton(
               icon: Icon(

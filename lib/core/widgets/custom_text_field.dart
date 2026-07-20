@@ -17,6 +17,7 @@ class CustomTextField extends StatefulWidget {
   final bool enabled;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
+  final String? errorText;
 
   const CustomTextField({
     super.key,
@@ -34,6 +35,7 @@ class CustomTextField extends StatefulWidget {
     this.enabled = true,
     this.onChanged,
     this.onSubmitted,
+    this.errorText,
   }) : assert(
          controller != null || initialValue != null,
          'Either controller or initialValue must be provided',
@@ -71,57 +73,78 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 56,
-      decoration: BoxDecoration(
-        color: widget.enabled
-            ? AppColors.backgroundVariant
-            : AppColors.backgroundVariantDark,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: widget.enabled
+                ? AppColors.backgroundVariant
+                : AppColors.backgroundVariantDark,
+            borderRadius: BorderRadius.circular(8),
+            border: widget.errorText != null
+                ? Border.all(
+                    color: Theme.of(context).colorScheme.error,
+                    width: 1.5,
+                  )
+                : null,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
 
-      child: TextField(
-        controller: _controller,
-        focusNode: widget.focusNode,
-        enabled: widget.enabled,
-        keyboardType: widget.keyboardType,
-        textInputAction: widget.textInputAction,
-        obscureText: widget.obscureText,
-        obscuringCharacter: widget.obscuringCharacter,
-        textAlignVertical: TextAlignVertical.center,
-        style: Theme.of(context).textTheme.bodyLarge,
+          child: TextField(
+            controller: _controller,
+            focusNode: widget.focusNode,
+            enabled: widget.enabled,
+            keyboardType: widget.keyboardType,
+            textInputAction: widget.textInputAction,
+            obscureText: widget.obscureText,
+            obscuringCharacter: widget.obscuringCharacter,
+            textAlignVertical: TextAlignVertical.center,
+            style: Theme.of(context).textTheme.bodyLarge,
 
-        onChanged: widget.onChanged,
+            onChanged: widget.onChanged,
 
-        onSubmitted: (value) {
-          if (widget.nextFocusNode != null) {
-            FocusScope.of(context).requestFocus(widget.nextFocusNode);
-          }
+            onSubmitted: (value) {
+              if (widget.nextFocusNode != null) {
+                FocusScope.of(context).requestFocus(widget.nextFocusNode);
+              }
 
-          widget.onSubmitted?.call(value);
-        },
+              widget.onSubmitted?.call(value);
+            },
 
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: widget.hintText,
-          hintStyle: Theme.of(context).textTheme.displaySmall,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: widget.hintText,
+              hintStyle: Theme.of(context).textTheme.displaySmall,
 
-          prefixIcon: widget.prefixIcon != null
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 8, left: 8, top: 8),
-                  child: widget.prefixIcon,
-                )
-              : null,
+              prefixIcon: widget.prefixIcon != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 8, left: 8, top: 8),
+                      child: widget.prefixIcon,
+                    )
+                  : null,
 
-          suffixIcon: widget.suffixIcon != null
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 8, left: 8, top: 8),
-                  child: widget.suffixIcon,
-                )
-              : null,
+              suffixIcon: widget.suffixIcon != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 8, left: 8, top: 8),
+                      child: widget.suffixIcon,
+                    )
+                  : null,
+            ),
+          ),
         ),
-      ),
+        if (widget.errorText != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            widget.errorText!,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+          ),
+        ],
+      ],
     );
   }
 }

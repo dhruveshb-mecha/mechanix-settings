@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mechanix_settings/core/utils/app_logger.dart';
+import 'package:mechanix_settings/features/wireless/data/models/enums.dart';
 import 'package:mechanix_settings/features/wireless/data/repositories/wireless_repository.dart';
 import 'package:mechanix_settings/features/wireless/blocs/wireless_event.dart';
 import 'package:mechanix_settings/features/wireless/blocs/wireless_state.dart';
@@ -25,6 +26,7 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
   bool _isLoading = false;
   Timer? _refreshTimer;
   bool _connectionInProgress = false;
+  DateTime? _connectionStartTime;
 
   WirelessBloc({required this.wirelessRepository})
     : super(const WirelessState()) {
@@ -188,6 +190,8 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
 
       final deviceState = await wirelessRepository.getWifiDeviceState();
 
+      // Request a Wi-Fi scan only when explicitly needed and the device is not
+      // in the middle of establishing a connection.
       final shouldScan =
           event.requestScan &&
           !_connectionInProgress &&
@@ -217,14 +221,30 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
       }
 
       String? connectingName = state.connectingNetworkName;
+      WirelessFailure? failure = state.error;
 
+      final elapsed = _connectionStartTime != null
+          ? DateTime.now().difference(_connectionStartTime!)
+          : Duration.zero;
+      final bool isTransientStart =
+          _connectionInProgress && elapsed.inSeconds < 3;
+
+      // Clear the pending connection on success, or report an error if the
+      // connection attempt failed or was terminated.
       if (connectingName != null) {
         if (deviceState == NetworkManagerDeviceState.activated &&
             connectedName == connectingName) {
           connectingName = null;
-        } else if (deviceState == NetworkManagerDeviceState.failed ||
-            deviceState == NetworkManagerDeviceState.disconnected ||
-            deviceState == NetworkManagerDeviceState.deactivating) {
+          failure = null;
+        } else if (!isTransientStart &&
+            (deviceState == NetworkManagerDeviceState.failed ||
+                deviceState == NetworkManagerDeviceState.disconnected ||
+                deviceState == NetworkManagerDeviceState.deactivating)) {
+          failure = WirelessFailure(
+            type: WirelessErrorType.connectionFailed,
+            message: 'Failed to connect to $connectingName',
+            data: {'networkName': connectingName},
+          );
           connectingName = null;
         }
       }
@@ -236,6 +256,7 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
         availableNetworks: availNets,
         connectedNetworkName: connectedName,
         connectingNetworkName: connectingName,
+        error: failure,
       );
 
       if (newState != state) {
@@ -325,7 +346,16 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
       );
     } catch (e, stackTrace) {
       _connectionInProgress = false;
-      emit(state.copyWith(connectingNetworkName: null, error: e.toString()));
+      emit(
+        state.copyWith(
+          connectingNetworkName: null,
+          error: WirelessFailure(
+            type: WirelessErrorType.connectionFailed,
+            message: e.toString(),
+            data: {'networkName': event.name},
+          ),
+        ),
+      );
       AppLogger.e("Failed to connect", stack: stackTrace);
     }
   }
@@ -360,7 +390,16 @@ class WirelessBloc extends Bloc<WirelessEvent, WirelessState> {
       );
     } catch (e, stackTrace) {
       _connectionInProgress = false;
-      emit(state.copyWith(connectingNetworkName: null, error: e.toString()));
+      emit(
+        state.copyWith(
+          connectingNetworkName: null,
+          error: WirelessFailure(
+            type: WirelessErrorType.addNetworkFailed,
+            message: e.toString(),
+            data: {'networkName': event.name},
+          ),
+        ),
+      );
       AppLogger.e('Failed to add network: $e', stack: stackTrace);
     }
   }

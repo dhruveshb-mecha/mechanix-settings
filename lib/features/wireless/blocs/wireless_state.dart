@@ -1,5 +1,17 @@
 import 'package:equatable/equatable.dart';
+import 'package:mechanix_settings/features/wireless/data/models/enums.dart';
 import 'package:mechanix_settings/features/wireless/data/models/wifi_network.dart';
+
+class WirelessFailure extends Equatable {
+  final WirelessErrorType type;
+  final String? message;
+  final Map<String, dynamic>? data;
+
+  const WirelessFailure({required this.type, this.message, this.data});
+
+  @override
+  List<Object?> get props => [type, message, data];
+}
 
 class WirelessState extends Equatable {
   static const _unset = Object();
@@ -11,7 +23,7 @@ class WirelessState extends Equatable {
   final List<WifiNetwork> myNetworks;
   final String? connectingNetworkName;
   final String? connectedNetworkName;
-  final String? error;
+  final WirelessFailure? error;
 
   const WirelessState({
     this.isWirelessOn = false,
@@ -46,7 +58,7 @@ class WirelessState extends Equatable {
       connectedNetworkName: connectedNetworkName == _unset
           ? this.connectedNetworkName
           : connectedNetworkName as String?,
-      error: error == _unset ? this.error : error as String?,
+      error: error == _unset ? this.error : error as WirelessFailure?,
     );
   }
 
@@ -56,6 +68,7 @@ class WirelessState extends Equatable {
     isScanning,
     savedNetworks,
     availableNetworks,
+    myNetworks,
     connectingNetworkName,
     connectedNetworkName,
     error,

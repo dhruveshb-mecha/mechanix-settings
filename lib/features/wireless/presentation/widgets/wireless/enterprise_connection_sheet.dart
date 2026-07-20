@@ -8,6 +8,7 @@ import 'package:mechanix_settings/core/widgets/custom_text_field.dart';
 import 'package:mechanix_settings/features/wireless/data/models/enterprise_config.dart';
 import 'package:mechanix_settings/features/wireless/data/models/enums.dart';
 import 'package:mechanix_settings/features/wireless/data/models/wifi_network.dart';
+import 'package:mechanix_settings/features/wireless/data/utils/enterprise_validations.dart';
 import 'package:mechanix_settings/features/wireless/presentation/widgets/add_network/enterprise_row.dart';
 import 'package:mechanix_settings/features/wireless/presentation/widgets/add_network/enterprise_section.dart';
 import 'package:mechanix_settings/l10n/app_localizations.dart';
@@ -36,6 +37,7 @@ class _EnterpriseConnectionBottomSheetState
   final _identityController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  Map<String, String> _errors = {};
 
   @override
   void initState() {
@@ -54,7 +56,38 @@ class _EnterpriseConnectionBottomSheetState
     super.dispose();
   }
 
+  bool _validate() {
+    final errors = <String, String>{};
+    final l10n = AppLocalizations.of(context)!;
+
+    if (widget.security == WirelessSecurity.leap) {
+      final identity = _identityController.text.trim();
+      final password = _passwordController.text.trim();
+      if (identity.isEmpty) {
+        errors['identity'] = l10n.identityRequired;
+      }
+      if (password.isEmpty) {
+        errors['password'] = l10n.passwordRequired;
+      }
+    } else {
+      EnterpriseValidation.validateEnterpriseConfig(
+        config: _enterpriseConfig,
+        errors: errors,
+        l10n: l10n,
+      );
+    }
+
+    setState(() {
+      _errors = errors;
+    });
+
+    return errors.isEmpty;
+  }
+
   void _connect() {
+    if (!_validate()) {
+      return;
+    }
     if (widget.security == WirelessSecurity.leap) {
       final identity = _identityController.text.trim();
       final password = _passwordController.text.trim();
@@ -115,6 +148,14 @@ class _EnterpriseConnectionBottomSheetState
                   child: CustomTextField(
                     controller: _identityController,
                     hintText: '',
+                    errorText: _errors['identity'],
+                    onChanged: (value) {
+                      if (_errors.containsKey('identity')) {
+                        setState(() {
+                          _errors.remove('identity');
+                        });
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -124,6 +165,14 @@ class _EnterpriseConnectionBottomSheetState
                     controller: _passwordController,
                     hintText: '',
                     obscureText: _obscurePassword,
+                    errorText: _errors['password'],
+                    onChanged: (value) {
+                      if (_errors.containsKey('password')) {
+                        setState(() {
+                          _errors.remove('password');
+                        });
+                      }
+                    },
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -144,9 +193,11 @@ class _EnterpriseConnectionBottomSheetState
                 // for that specific EAP method directly, while still allowing adjustment if needed.
                 EnterpriseSection(
                   config: _enterpriseConfig,
+                  errors: _errors,
                   onChanged: (config) {
                     setState(() {
                       _enterpriseConfig = config;
+                      _errors.clear();
                     });
                   },
                 ),

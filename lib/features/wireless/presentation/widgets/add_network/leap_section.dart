@@ -7,8 +7,14 @@ import 'package:mechanix_settings/l10n/app_localizations.dart';
 class LeapSection extends StatefulWidget {
   final EnterpriseConfig config;
   final ValueChanged<EnterpriseConfig> onChanged;
+  final Map<String, String>? errors;
 
-  const LeapSection({super.key, required this.config, required this.onChanged});
+  const LeapSection({
+    super.key,
+    required this.config,
+    required this.onChanged,
+    this.errors,
+  });
 
   @override
   State<LeapSection> createState() => _LeapSectionState();
@@ -31,6 +37,7 @@ class _LeapSectionState extends State<LeapSection> {
           child: CustomTextField(
             initialValue: config.identity,
             hintText: '',
+            errorText: widget.errors?['identity'],
             onChanged: (value) {
               onChanged(config.copyWith(identity: value));
             },
@@ -45,6 +52,7 @@ class _LeapSectionState extends State<LeapSection> {
             initialValue: config.password,
             hintText: '',
             obscureText: _obscurePassword,
+            errorText: widget.errors?['password'],
 
             onChanged: (value) {
               onChanged(config.copyWith(password: value));
