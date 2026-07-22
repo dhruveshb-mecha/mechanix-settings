@@ -372,7 +372,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get speakerType => 'Speaker';
 
   @override
-  String get otherType => 'Other';
+  String get unknownType => 'Unknown';
+
+  @override
+  String get car => 'Car';
+
+  @override
+  String get headphones => 'Headphones';
+
+  @override
+  String get computer => 'Computer';
+
+  @override
+  String get tv => 'TV';
 
   @override
   String get cancel => 'Cancel';
@@ -422,6 +434,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String addNetworkFailedWithNetwork(String networkName) {
     return 'Failed to add network $networkName';
   }
+
+  @override
+  String get discoverable => 'Discoverable';
+
+  @override
+  String get bluetoothConnectionFailed =>
+      'Failed to connect to Bluetooth device';
+
+  @override
+  String bluetoothConnectionFailedWithName(String deviceName) {
+    return 'Failed to connect to $deviceName';
+  }
+
+  @override
+  String get bluetoothPairingFailed => 'Failed to pair with Bluetooth device';
+
+  @override
+  String bluetoothPairingFailedWithName(String deviceName) {
+    return 'Failed to pair with $deviceName';
+  }
+
+  @override
+  String get deviceNameLimit => 'Device name cannot exceed 30 characters';
 
   @override
   String get unknownError => 'An unknown error occurred';

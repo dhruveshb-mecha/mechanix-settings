@@ -802,11 +802,35 @@ abstract class AppLocalizations {
   /// **'Speaker'**
   String get speakerType;
 
-  /// No description provided for @otherType.
+  /// No description provided for @unknownType.
   ///
   /// In en, this message translates to:
-  /// **'Other'**
-  String get otherType;
+  /// **'Unknown'**
+  String get unknownType;
+
+  /// No description provided for @car.
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get car;
+
+  /// No description provided for @headphones.
+  ///
+  /// In en, this message translates to:
+  /// **'Headphones'**
+  String get headphones;
+
+  /// No description provided for @computer.
+  ///
+  /// In en, this message translates to:
+  /// **'Computer'**
+  String get computer;
+
+  /// No description provided for @tv.
+  ///
+  /// In en, this message translates to:
+  /// **'TV'**
+  String get tv;
 
   /// No description provided for @cancel.
   ///
@@ -897,6 +921,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to add network {networkName}'**
   String addNetworkFailedWithNetwork(String networkName);
+
+  /// No description provided for @discoverable.
+  ///
+  /// In en, this message translates to:
+  /// **'Discoverable'**
+  String get discoverable;
+
+  /// No description provided for @bluetoothConnectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to Bluetooth device'**
+  String get bluetoothConnectionFailed;
+
+  /// No description provided for @bluetoothConnectionFailedWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to connect to {deviceName}'**
+  String bluetoothConnectionFailedWithName(String deviceName);
+
+  /// No description provided for @bluetoothPairingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pair with Bluetooth device'**
+  String get bluetoothPairingFailed;
+
+  /// No description provided for @bluetoothPairingFailedWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pair with {deviceName}'**
+  String bluetoothPairingFailedWithName(String deviceName);
+
+  /// No description provided for @deviceNameLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Device name cannot exceed 30 characters'**
+  String get deviceNameLimit;
 
   /// No description provided for @unknownError.
   ///
