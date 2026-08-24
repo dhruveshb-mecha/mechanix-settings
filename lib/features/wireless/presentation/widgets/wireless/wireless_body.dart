@@ -23,19 +23,29 @@ class WirelessBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScrollConfiguration(
-      behavior: ScrollConfiguration.of(context).copyWith(
-        dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
-      ),
-      child: const SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _WirelessToggle(),
-            CustomDivider(verticalPadding: 0),
-            _WirelessContent(),
-            _ManageNetworksTile(),
-          ],
+    return BlocListener<WirelessBloc, WirelessState>(
+      listenWhen: (previous, current) =>
+          !previous.isCaptivePortal &&
+          current.isCaptivePortal &&
+          current.connectedNetworkName != null,
+      listener: (context, state) {
+        // Open the captive portal once after successfully connecting to a network.
+        context.read<WirelessBloc>().add(const OpenCaptivePortal());
+      },
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.mouse},
+        ),
+        child: const SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _WirelessToggle(),
+              CustomDivider(verticalPadding: 0),
+              _WirelessContent(),
+              _ManageNetworksTile(),
+            ],
+          ),
         ),
       ),
     );
@@ -237,21 +247,23 @@ class _ConnectedNetworkTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<WirelessBloc, WirelessState, WifiNetwork?>(
+    final l10n = AppLocalizations.of(context)!;
+
+    return BlocSelector<
+      WirelessBloc,
+      WirelessState,
+      ({WifiNetwork? connected, bool hasNoInternet})
+    >(
       selector: (state) {
-        return state.myNetworks
-                .firstWhere(
-                  (n) => n.name == state.connectedNetworkName,
-                  orElse: () => const WifiNetwork(name: ''),
-                )
-                .name
-                .isEmpty
-            ? null
-            : state.myNetworks.firstWhere(
-                (n) => n.name == state.connectedNetworkName,
-              );
+        final net = state.myNetworks
+            .where((n) => n.name == state.connectedNetworkName)
+            .firstOrNull;
+        return (connected: net, hasNoInternet: state.hasNoInternet);
       },
-      builder: (context, connected) {
+      builder: (context, data) {
+        final connected = data.connected?.copyWith(
+          hasNoInternet: data.hasNoInternet,
+        );
         if (connected == null) {
           return const SizedBox.shrink();
         }
@@ -260,6 +272,7 @@ class _ConnectedNetworkTile extends StatelessWidget {
           children: [
             NetworkListItem(
               name: connected.name,
+              subtitle: data.hasNoInternet ? l10n.noInternetConnection : null,
               signalType: connected.signalType,
               isConnected: true,
               isConnecting: false,

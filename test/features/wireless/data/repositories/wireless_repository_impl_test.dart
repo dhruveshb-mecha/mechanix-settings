@@ -432,7 +432,7 @@ void main() {
       () => mockClient.activateConnection(
         connection: connection,
         device: mockWifiDevice,
-        accessPoint: ap,
+        accessPoint: any(named: 'accessPoint'),
       ),
     ).thenAnswer((_) async => MockNetworkManagerActiveConnection());
 
@@ -442,7 +442,7 @@ void main() {
       () => mockClient.activateConnection(
         connection: connection,
         device: mockWifiDevice,
-        accessPoint: ap,
+        accessPoint: any(named: 'accessPoint'),
       ),
     ).called(1);
   });
@@ -720,5 +720,42 @@ void main() {
 
     expect(result.active, isNull);
     expect(result.available, isEmpty);
+  });
+
+  group('Captive Portal', () {
+    test('isCaptivePortal returns false if connectivity state is not portal', () async {
+      when(() => mockClient.connectivity).thenReturn(NetworkManagerConnectivityState.limited);
+      final result = await repository.isCaptivePortal();
+      expect(result, false);
+    });
+
+    test('isCaptivePortal returns true if connectivity state is portal', () async {
+      when(() => mockClient.connectivity).thenReturn(NetworkManagerConnectivityState.portal);
+      final result = await repository.isCaptivePortal();
+      expect(result, true);
+    });
+
+    test('isCaptivePortal returns false when not connected/initialized', () async {
+      final uninitializedRepo = WirelessRepositoryImpl();
+      expect(await uninitializedRepo.isCaptivePortal(), false);
+    });
+
+    test('openCaptivePortal opens client check uri if present', () async {
+      when(() => mockClient.connectivityCheckUri).thenReturn('http://check.me');
+      await repository.openCaptivePortal();
+    });
+  });
+
+  group('Lifecycle & Close', () {
+    test('close calls client close when connected', () async {
+      when(() => mockClient.close()).thenAnswer((_) async {});
+      await repository.close();
+      verify(() => mockClient.close()).called(1);
+    });
+
+    test('close does nothing when uninitialized', () async {
+      final uninitializedRepo = WirelessRepositoryImpl();
+      await expectLater(uninitializedRepo.close(), completes);
+    });
   });
 }

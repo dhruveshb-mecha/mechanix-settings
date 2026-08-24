@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:mechanix_settings/features/wireless/data/models/enums.dart';
 import 'package:mechanix_settings/features/wireless/data/models/wifi_network.dart';
+import 'package:nm/nm.dart';
 
 class WirelessFailure extends Equatable {
   final WirelessErrorType type;
@@ -17,37 +18,50 @@ class WirelessState extends Equatable {
   static const _unset = Object();
 
   final bool isWirelessOn;
+  final NetworkManagerConnectivityState connectivityState;
   final bool isScanning;
   final List<WifiNetwork> savedNetworks;
   final List<WifiNetwork> availableNetworks;
   final List<WifiNetwork> myNetworks;
   final String? connectingNetworkName;
   final String? connectedNetworkName;
+  final bool isCaptivePortal;
   final WirelessFailure? error;
 
   const WirelessState({
     this.isWirelessOn = false,
+    this.connectivityState = NetworkManagerConnectivityState.unknown,
     this.isScanning = false,
     this.savedNetworks = const [],
     this.availableNetworks = const [],
     this.myNetworks = const [],
     this.connectingNetworkName,
     this.connectedNetworkName,
+    this.isCaptivePortal = false,
     this.error,
   });
 
+  bool get hasNoInternet =>
+      connectingNetworkName == null &&
+      connectedNetworkName != null &&
+      (connectivityState == NetworkManagerConnectivityState.none ||
+          connectivityState == NetworkManagerConnectivityState.limited);
+
   WirelessState copyWith({
     bool? isWirelessOn,
+    NetworkManagerConnectivityState? connectivityState,
     bool? isScanning,
     List<WifiNetwork>? savedNetworks,
     List<WifiNetwork>? availableNetworks,
     List<WifiNetwork>? myNetworks,
     Object? connectingNetworkName = _unset,
     Object? connectedNetworkName = _unset,
+    bool? isCaptivePortal,
     Object? error = _unset,
   }) {
     return WirelessState(
       isWirelessOn: isWirelessOn ?? this.isWirelessOn,
+      connectivityState: connectivityState ?? this.connectivityState,
       isScanning: isScanning ?? this.isScanning,
       savedNetworks: savedNetworks ?? this.savedNetworks,
       availableNetworks: availableNetworks ?? this.availableNetworks,
@@ -58,6 +72,7 @@ class WirelessState extends Equatable {
       connectedNetworkName: connectedNetworkName == _unset
           ? this.connectedNetworkName
           : connectedNetworkName as String?,
+      isCaptivePortal: isCaptivePortal ?? this.isCaptivePortal,
       error: error == _unset ? this.error : error as WirelessFailure?,
     );
   }
@@ -65,12 +80,14 @@ class WirelessState extends Equatable {
   @override
   List<Object?> get props => [
     isWirelessOn,
+    connectivityState,
     isScanning,
     savedNetworks,
     availableNetworks,
     myNetworks,
     connectingNetworkName,
     connectedNetworkName,
+    isCaptivePortal,
     error,
   ];
 }

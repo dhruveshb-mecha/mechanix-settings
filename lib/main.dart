@@ -37,7 +37,7 @@ void main() {
     MultiRepositoryProvider(
       providers: [
         RepositoryProvider<WirelessRepository>(
-          create: (_) => WirelessRepositoryImpl(),
+          create: (_) => WirelessRepositoryImpl()..init(),
         ),
         RepositoryProvider<BluetoothRepository>(
           create: (_) => BluetoothRepositoryImpl(),
@@ -55,11 +55,13 @@ void main() {
       child: MultiBlocProvider(
         providers: [
           BlocProvider<WirelessBloc>(
+            lazy: false,
             create: (context) => WirelessBloc(
               wirelessRepository: context.read<WirelessRepository>(),
             )..add(InitWifi()),
           ),
           BlocProvider<BluetoothBloc>(
+            lazy: false,
             create: (context) =>
                 BluetoothBloc(context.read<BluetoothRepository>())
                   ..add(const LoadBluetooth()),

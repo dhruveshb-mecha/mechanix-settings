@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:dbus/dbus.dart';
 import 'package:flutter/foundation.dart';
@@ -120,17 +120,18 @@ class WirelessRepositoryImpl implements WirelessRepository {
           if (ssidValue is! DBusArray) {
             continue;
           }
-
-          final ssid = String.fromCharCodes(
-            ssidValue.children.whereType<DBusByte>().map((e) => e.value),
-          );
+          final ssidBytes = ssidValue.children
+              .whereType<DBusByte>()
+              .map((e) => e.value)
+              .toList();
+          final ssid = utf8.decode(ssidBytes, allowMalformed: true);
 
           if (ssid.isEmpty) {
             continue;
           }
 
           final ap = scannedAps.firstWhereOrNull(
-            (a) => utf8.decode(a.ssid) == ssid,
+            (a) => utf8.decode(a.ssid, allowMalformed: true) == ssid,
           );
 
           final network = await _mapToWifiNetwork(
@@ -193,6 +194,7 @@ class WirelessRepositoryImpl implements WirelessRepository {
       if (requestScan &&
           wifiDevice.wireless != null &&
           !const {
+            NetworkManagerDeviceState.deactivating,
             NetworkManagerDeviceState.prepare,
             NetworkManagerDeviceState.config,
             NetworkManagerDeviceState.needAuth,
@@ -222,9 +224,11 @@ class WirelessRepositoryImpl implements WirelessRepository {
             if (wirelessSettings != null) {
               final ssidVal = wirelessSettings['ssid'];
               if (ssidVal != null && ssidVal is DBusArray) {
-                final ssid = String.fromCharCodes(
-                  ssidVal.children.map((e) => (e as DBusByte).value),
-                );
+                final ssidBytes = ssidVal.children
+                    .whereType<DBusByte>()
+                    .map((e) => e.value)
+                    .toList();
+                final ssid = utf8.decode(ssidBytes, allowMalformed: true);
                 savedSsids.add(ssid);
               }
             }
@@ -234,7 +238,7 @@ class WirelessRepositoryImpl implements WirelessRepository {
 
       final seenSsids = <String>{};
       for (var ap in scannedAps) {
-        final ssid = utf8.decode(ap.ssid);
+        final ssid = utf8.decode(ap.ssid, allowMalformed: true);
         if (ssid.isNotEmpty &&
             !savedSsids.contains(ssid) &&
             !seenSsids.contains(ssid)) {
@@ -268,7 +272,9 @@ class WirelessRepositoryImpl implements WirelessRepository {
     }
 
     final scannedAps = wifiDevice.wireless?.accessPoints ?? [];
-    final ap = scannedAps.firstWhereOrNull((a) => utf8.decode(a.ssid) == name);
+    final ap = scannedAps.firstWhereOrNull(
+      (a) => utf8.decode(a.ssid, allowMalformed: true) == name,
+    );
 
     // Search for an existing saved NetworkManager connection settings profile.
     final existingConnection = await _findExistingConnection(
@@ -302,7 +308,6 @@ class WirelessRepositoryImpl implements WirelessRepository {
         await _client.activateConnection(
           connection: existingConnection,
           device: wifiDevice,
-          accessPoint: ap,
         );
         return;
       }
@@ -818,7 +823,7 @@ class WirelessRepositoryImpl implements WirelessRepository {
   }) async {
     try {
       final targetSsid = accessPoint != null
-          ? utf8.decode(accessPoint.ssid)
+          ? utf8.decode(accessPoint.ssid, allowMalformed: true)
           : ssid;
 
       for (final connection in _client.settings.connections) {
@@ -832,9 +837,11 @@ class WirelessRepositoryImpl implements WirelessRepository {
         final ssidValue = wireless['ssid'];
         if (ssidValue is! DBusArray) continue;
 
-        final connectionSsid = String.fromCharCodes(
-          ssidValue.children.map((e) => (e as DBusByte).value),
-        );
+        final ssidBytes = ssidValue.children
+            .whereType<DBusByte>()
+            .map((e) => e.value)
+            .toList();
+        final connectionSsid = utf8.decode(ssidBytes, allowMalformed: true);
 
         if (connectionSsid == targetSsid) {
           return connection;
@@ -853,7 +860,7 @@ class WirelessRepositoryImpl implements WirelessRepository {
     NetworkManagerDevice device,
     NetworkManagerAccessPoint accessPoint,
   ) async {
-    var ssid = utf8.decode(accessPoint.ssid);
+    var ssid = utf8.decode(accessPoint.ssid, allowMalformed: true);
 
     var settings = await Future.wait(
       device.availableConnections.map(
@@ -960,7 +967,7 @@ class WirelessRepositoryImpl implements WirelessRepository {
       final ip6Config = wifiDevice.ip6Config;
 
       for (final nmAccessPoint in nmAccessPoints) {
-        final ssid = utf8.decode(nmAccessPoint.ssid);
+        final ssid = utf8.decode(nmAccessPoint.ssid, allowMalformed: true);
 
         if (ssid.isNotEmpty && !seenSsids.contains(ssid)) {
           seenSsids.add(ssid);
@@ -1029,8 +1036,12 @@ class WirelessRepositoryImpl implements WirelessRepository {
                 ? ''
                 : flatSettings["802-11-wireless.seen-bssids"].toString();
 
+            final savedSsid =
+                flatSettings["802-11-wireless.ssid"]?.toString() ??
+                flatSettings["connection.id"]?.toString();
+
             final savedNetwork = SavedWirelessNetwork(
-              ssid: flatSettings["connection.id"]?.toString(),
+              ssid: savedSsid,
               macAddress: macAddress.replaceAll(RegExp(r'[\[\]]'), ''),
               security: flatSettings["802-11-wireless-security.key-mgmt"]
                   ?.toString(),
@@ -1070,7 +1081,7 @@ class WirelessRepositoryImpl implements WirelessRepository {
     final scannedAps = wifiDevice.wireless?.accessPoints ?? [];
 
     final visibleSsids = scannedAps
-        .map((ap) => utf8.decode(ap.ssid))
+        .map((ap) => utf8.decode(ap.ssid, allowMalformed: true))
         .where((ssid) => ssid.isNotEmpty)
         .toSet();
 
@@ -1108,11 +1119,12 @@ class WirelessRepositoryImpl implements WirelessRepository {
 
       if (ap != null) {
         final activeAp = device?.wireless?.activeAccessPoint;
-
-        return (
-          isConnected: activeAp != null && listEquals(activeAp.ssid, ap.ssid),
-          device: device,
-        );
+        if (activeAp != null) {
+          return (
+            isConnected: listEquals(activeAp.ssid, ap.ssid),
+            device: device,
+          );
+        }
       }
 
       final activeConnection = device?.activeConnection;
@@ -1299,5 +1311,88 @@ class WirelessRepositoryImpl implements WirelessRepository {
     }
 
     return false;
+  }
+
+  @override
+  NetworkManagerConnectivityState getConnectivityState() {
+    if (!_connected) return NetworkManagerConnectivityState.unknown;
+    return _client.connectivity;
+  }
+
+  /// Returns whether NetworkManager has detected the current Wi-Fi connection
+  /// as being behind a captive portal.
+  @override
+  Future<bool> isCaptivePortal() async {
+    if (!_connected) return false;
+    try {
+      return _client.connectivity == NetworkManagerConnectivityState.portal;
+    } catch (e, stack) {
+      AppLogger.e(
+        'Failed to check captive portal state',
+        error: e,
+        stack: stack,
+      );
+      return false;
+    }
+  }
+
+  /// Opens the captive portal login page by requesting the configured
+  /// connectivity check URL and launching the redirected portal URL, if present.
+  @override
+  Future<void> openCaptivePortal() async {
+    if (!_connected) {
+      AppLogger.e('Cannot open captive portal: Wi-Fi is not connected');
+      return;
+    }
+
+    final checkUri = _client.connectivityCheckUri;
+    AppLogger.d('Connectivity check URI: $checkUri');
+
+    if (checkUri.isEmpty) {
+      AppLogger.e('No connectivity check URI configured');
+      return;
+    }
+
+    final httpClient = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 5);
+
+    try {
+      // Request the connectivity check URL to detect the captive portal redirect.
+      final request = await httpClient.getUrl(Uri.parse(checkUri));
+
+      // Keep redirects disabled to capture the portal login URL from the response.
+      request.followRedirects = false;
+
+      final response = await request.close();
+
+      // Captive portals usually redirect the connectivity check request to a login page.
+      final portalUrl = response.headers.value(HttpHeaders.locationHeader);
+
+      final targetUrl = portalUrl ?? checkUri;
+
+      AppLogger.d('Opening captive portal URL: $targetUrl');
+
+      // TODO: Implement platform-specific logic to open the URL
+      // Launch the portal URL using the system's default browser.
+
+      await Process.run('xdg-open', [targetUrl]);
+    } catch (e, stack) {
+      AppLogger.e('Failed to open captive portal', error: e, stack: stack);
+    } finally {
+      // Release HTTP resources after the connectivity check completes.
+      httpClient.close();
+    }
+  }
+
+  @override
+  Future<void> close() async {
+    try {
+      if (_connected) {
+        _connected = false;
+        await _client.close();
+      }
+    } catch (e, stack) {
+      AppLogger.e('Failed to close NetworkManagerClient', error: e, stack: stack);
+    }
   }
 }
