@@ -16,6 +16,7 @@ on:
       - "elinux/**"
 
 env:
+  FLUTTER_ELINUX_VERSION: "3.47.0"
   CARGO_INCREMENTAL: 0
   CARGO_NET_RETRY: 10
   RUST_BACKTRACE: short
@@ -70,7 +71,7 @@ jobs:
       - name: Install Flutter eLinux Toolchain
         run: |
           if [ ! -d "/opt/flutter-elinux" ]; then
-            git clone https://github.com/flutter-elinux/flutter-elinux.git
+            git clone --branch "$FLUTTER_ELINUX_VERSION" --depth 1 https://github.com/flutter-elinux/flutter-elinux.git
             sudo mv flutter-elinux /opt/
           fi
 
