@@ -92,13 +92,16 @@ jobs:
       - name: Fetch dependencies
         run: flutter-elinux pub get
 
+      - name: Precache eLinux engine artifacts
+        run: flutter-elinux precache --elinux
+
       - name: Override embedder .so
-        if: ${{ inputs.embedder_so_url != '' }}
         run: |
           set -euo pipefail
           ENGINE_DIR="/opt/flutter-elinux/flutter/bin/cache/artifacts/engine/elinux-arm64-release"
-          echo "Overriding libflutter_elinux_wayland.so with ${{ inputs.embedder_so_url }}"
-          curl -fsSL -o "$ENGINE_DIR/libflutter_elinux_wayland.so" "${{ inputs.embedder_so_url }}"
+          EMBEDDER_SO_URL="https://github.com/dhruveshb-mecha/flutter-embedded-linux/releases/download/embedder-dev/libflutter_elinux_wayland.so"
+          echo "Overriding libflutter_elinux_wayland.so with $EMBEDDER_SO_URL"
+          curl -fsSL -o "$ENGINE_DIR/libflutter_elinux_wayland.so" "$EMBEDDER_SO_URL"
 
       - name: Build settings
         run: flutter-elinux build elinux --release
