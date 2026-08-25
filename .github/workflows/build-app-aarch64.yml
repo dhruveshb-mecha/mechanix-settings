@@ -2,6 +2,11 @@ name: Build Settings aarch64
 
 on:
   workflow_dispatch:
+    inputs:
+      embedder_so_url:
+        description: "Optional: URL to a libflutter_elinux_wayland.so to use instead of the precached one, for validating embedder fixes before they're released (e.g. https://github.com/dhruveshb-mecha/flutter-embedded-linux/releases/download/embedder-dev/libflutter_elinux_wayland.so)"
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -84,10 +89,19 @@ jobs:
 
           echo "/opt/flutter-elinux/bin" >> $GITHUB_PATH
 
-      - name: Build settings
+      - name: Fetch dependencies
+        run: flutter-elinux pub get
+
+      - name: Override embedder .so
+        if: ${{ inputs.embedder_so_url != '' }}
         run: |
-          flutter-elinux pub get
-          flutter-elinux build elinux --release
+          set -euo pipefail
+          ENGINE_DIR="/opt/flutter-elinux/flutter/bin/cache/artifacts/engine/elinux-arm64-release"
+          echo "Overriding libflutter_elinux_wayland.so with ${{ inputs.embedder_so_url }}"
+          curl -fsSL -o "$ENGINE_DIR/libflutter_elinux_wayland.so" "${{ inputs.embedder_so_url }}"
+
+      - name: Build settings
+        run: flutter-elinux build elinux --release
 
       - name: Resolve versions
         id: version
@@ -125,11 +139,13 @@ jobs:
           done
 
       - name: Setup | Pulp CLI
+        if: ${{ inputs.embedder_so_url == '' }}
         run: |
           pipx install --force "pulp-cli==0.39.3"
           pipx inject pulp-cli pulp-cli-deb pulp_rpm
 
       - name: Configure Pulp CLI
+        if: ${{ inputs.embedder_so_url == '' }}
         run: |
           set -euo pipefail
           PULP_API_URL="$(printf '%s' "${MECHA_PULP_API_URL}" | tr -d '[:space:]')"
@@ -146,6 +162,7 @@ jobs:
             --overwrite
 
       - name: Publish RPM
+        if: ${{ inputs.embedder_so_url == '' }}
         continue-on-error: true
         run: |
           RPM_FILE=$(find ./dist -name "mechanix-settings*.rpm" -type f | head -n1)
@@ -162,6 +179,7 @@ jobs:
             --publication="$PUB_HREF"
 
       - name: Publish DEB
+        if: ${{ inputs.embedder_so_url == '' }}
         continue-on-error: true
         run: |
           DEB_FILE=$(find ./dist -name "mechanix-settings*.deb" -type f | head -n1)
